@@ -14,6 +14,17 @@ export default defineConfig(
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
   tseslint.configs.stylisticTypeChecked,
+
+  {
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+
   {
     files: ["app/**/*.{ts,tsx}"],
     extends: [
@@ -23,10 +34,6 @@ export default defineConfig(
     ],
     plugins: { "react-hooks": reactHooks },
     languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
       globals: { ...globals.browser },
     },
     settings: { react: { version: "detect" } },
