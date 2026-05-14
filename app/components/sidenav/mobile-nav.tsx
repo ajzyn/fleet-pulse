@@ -3,6 +3,7 @@ import { IconButton, Text } from "@radix-ui/themes";
 import { useState } from "react";
 import { Link, useLocation } from "react-router";
 import { Drawer } from "../drawer";
+import { ThemeToggle } from "../theme-toggle/theme-toggle";
 import { SidenavList } from "./sidenav-list";
 
 export function MobileNav() {
@@ -44,6 +45,9 @@ export function MobileNav() {
         <Drawer.Body>
           <SidenavList />
         </Drawer.Body>
+        <Drawer.Footer>
+          <ThemeToggle />
+        </Drawer.Footer>
       </Drawer.Root>
     </>
   );
