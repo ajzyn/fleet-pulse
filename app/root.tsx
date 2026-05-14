@@ -7,6 +7,8 @@ import {
   ScrollRestoration,
 } from "react-router";
 
+import { Theme } from "@radix-ui/themes";
+import "@radix-ui/themes/styles.css";
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -28,12 +30,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <Meta />
         <Links />
       </head>
       <body>
-        {children}
+        <Theme panelBackground="translucent" appearance="dark" grayColor="slate">
+          {children}
+        </Theme>
         <ScrollRestoration />
         <Scripts />
       </body>

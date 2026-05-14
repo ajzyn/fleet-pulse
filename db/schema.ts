@@ -1,16 +1,16 @@
+import { relations, sql } from "drizzle-orm";
 import {
-  pgTable,
-  pgEnum,
-  uuid,
-  text,
-  integer,
-  numeric,
-  timestamp,
   date,
   index,
+  integer,
+  numeric,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
   uniqueIndex,
+  uuid,
 } from "drizzle-orm/pg-core";
-import { relations, sql } from "drizzle-orm";
 
 export const vehicleStatus = pgEnum("vehicle_status", ["active", "in_maintenance", "retired"]);
 
@@ -46,6 +46,10 @@ export const vehicles = pgTable("vehicles", {
   currentMileageKm: integer("current_mileage_km").notNull().default(0),
   lastServiceAt: timestamp("last_service_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true, precision: 3 })
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
 });
 
 export const drivers = pgTable("drivers", {

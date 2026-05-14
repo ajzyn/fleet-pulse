@@ -14,3 +14,7 @@ body {
     color-scheme: dark;
   }
 }
+
+.radix-themes {
+  --cursor-button: pointer;
+}
