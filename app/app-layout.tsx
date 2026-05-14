@@ -1,17 +1,16 @@
 import { Outlet } from "react-router";
+import { Toaster } from "sonner";
 
-export function Layout() {
+export default function AppLayout() {
   return (
-    <div className="app-layout">
-      <header className="app-header">
-        <h1>My App</h1>
+    <div className="min-h-screen flex flex-col">
+      <header className="border-b border-gray-200 dark:border-gray-800 px-6 py-4">
+        <p className="font-semibold tracking-tight">FleetPulse</p>
       </header>
-      <main className="app-content">
+      <main className="flex-1">
         <Outlet />
+        <Toaster position="bottom-right" richColors closeButton />
       </main>
-      <footer className="app-footer">
-        <p>&copy; 2026 My App. All rights reserved.</p>
-      </footer>
     </div>
   );
 }
