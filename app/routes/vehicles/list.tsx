@@ -1,12 +1,16 @@
 import { data } from "react-router";
 import { RouteErrorFallback } from "~/components/feedback/route-error-fallback";
+import VehiclesList from "~/features/vehicles/list";
 import { VEHICLES_INTENT } from "~/features/vehicles/list/server/intents";
 import { parseVehiclesQuery } from "~/features/vehicles/list/server/list.query";
 import { listVehicles } from "~/features/vehicles/list/server/list.repository";
 import { handleUpdateStatus } from "~/features/vehicles/list/server/update-status.action";
-import VehiclesList from "~/features/vehicles/list";
 import { INTENT_FIELD, UNKNOWN_INTENT } from "~/lib/action";
 import type { Route } from "./+types/list";
+
+export function meta() {
+  return [{ title: "Vehicles — FleetPulse" }];
+}
 
 export async function loader({ request }: Route.LoaderArgs) {
   const query = parseVehiclesQuery(new URL(request.url));
@@ -24,6 +28,30 @@ export async function action({ request }: Route.ActionArgs) {
     default:
       return data({ ok: false, kind: UNKNOWN_INTENT }, { status: 400 });
   }
+}
+
+interface CacheEntry {
+  data: Awaited<ReturnType<typeof loader>>;
+  ts: number;
+}
+const cache = new Map<string, CacheEntry>();
+const STALE_MS = 30000;
+
+export async function clientLoader({ request, serverLoader }: Route.ClientLoaderArgs) {
+  const key = new URL(request.url).search;
+  const entry = cache.get(key);
+  if (entry && Date.now() - entry.ts < STALE_MS) {
+    return entry.data;
+  }
+  const fresh = await serverLoader();
+  cache.set(key, { data: fresh, ts: Date.now() });
+  return fresh;
+}
+clientLoader.hydrate = true as const;
+
+export async function clientAction({ serverAction }: Route.ClientActionArgs) {
+  cache.clear();
+  return serverAction();
 }
 
 export default function VehiclesRoute({ loaderData }: Route.ComponentProps) {

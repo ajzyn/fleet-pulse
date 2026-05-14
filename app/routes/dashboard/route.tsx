@@ -1,3 +1,7 @@
+export function meta() {
+  return [{ title: "Dashboard — FleetPulse" }];
+}
+
 export default function Dashboard() {
   return (
     <div>

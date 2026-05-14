@@ -1,16 +1,19 @@
 import {
+  data,
   isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteLoaderData,
 } from "react-router";
 
 import { Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import type { Route } from "./+types/root";
 import "./app.css";
+import { getTheme, themeCookie, type Appearance } from "~/lib/theme-cookie.server";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -25,7 +28,23 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+export async function loader({ request }: Route.LoaderArgs) {
+  return { appearance: await getTheme(request) };
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  const formData = await request.formData();
+  const raw = formData.get("appearance");
+  const appearance: Appearance = raw === "light" ? "light" : "dark";
+  return data(null, {
+    headers: { "Set-Cookie": await themeCookie.serialize(appearance) },
+  });
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const rootData = useRouteLoaderData<typeof loader>("root");
+  const appearance: Appearance = rootData?.appearance ?? "dark";
+
   return (
     <html lang="en">
       <head>
@@ -35,7 +54,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Theme panelBackground="translucent" appearance="dark" grayColor="slate">
+        <Theme
+          panelBackground="translucent"
+          accentColor="iris"
+          grayColor="slate"
+          appearance={appearance}
+        >
           {children}
         </Theme>
         <ScrollRestoration />
