@@ -27,7 +27,7 @@ export function DropdownMenuContent({
           sideOffset={sideOffset}
           collisionPadding={collisionPadding}
           className="rt-PopperContent rt-BaseMenuContent rt-DropdownMenuContent rt-r-size-2 rt-variant-solid"
-          {...(side && { side })}
+          {...(side ? { side } : {})}
         >
           <div className="rt-BaseMenuViewport rt-DropdownMenuViewport">{children}</div>
         </DropdownMenu.Content>

@@ -1,12 +1,16 @@
 import { data } from "react-router";
 import { RouteErrorFallback } from "~/components/feedback/route-error-fallback";
+import VehiclesList from "~/features/vehicles/list";
 import { VEHICLES_INTENT } from "~/features/vehicles/list/server/intents";
 import { parseVehiclesQuery } from "~/features/vehicles/list/server/list.query";
 import { listVehicles } from "~/features/vehicles/list/server/list.repository";
 import { handleUpdateStatus } from "~/features/vehicles/list/server/update-status.action";
-import VehiclesList from "~/features/vehicles/list";
 import { INTENT_FIELD, UNKNOWN_INTENT } from "~/lib/action";
 import type { Route } from "./+types/list";
+
+export function meta() {
+  return [{ title: "Vehicles — FleetPulse" }];
+}
 
 export async function loader({ request }: Route.LoaderArgs) {
   const query = parseVehiclesQuery(new URL(request.url));

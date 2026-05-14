@@ -35,7 +35,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Theme panelBackground="translucent" appearance="dark" grayColor="slate">
+        <Theme panelBackground="translucent" accentColor="iris" appearance="dark" grayColor="slate">
           {children}
         </Theme>
         <ScrollRestoration />
