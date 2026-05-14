@@ -11,8 +11,13 @@ export function Header({ children }: PropsWithChildren) {
           {children}
         </Flex>
         <Dialog.Close asChild>
-          <IconButton variant="ghost" color="gray" aria-label="Close">
-            <Cross1Icon />
+          <IconButton
+            size={{ initial: "3", md: "2" }}
+            variant="ghost"
+            color="gray"
+            aria-label="Close"
+          >
+            <Cross1Icon className="size-6 md:size-[15px]" />
           </IconButton>
         </Dialog.Close>
       </Flex>

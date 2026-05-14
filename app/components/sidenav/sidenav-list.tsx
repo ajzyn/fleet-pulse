@@ -1,11 +1,7 @@
 import { NavLink } from "react-router";
 import { NAV_ITEMS } from "./nav-config";
 
-interface SidenavListProps {
-  onItemClick?: () => void;
-}
-
-export default function SidenavList({ onItemClick }: SidenavListProps) {
+export function SidenavList() {
   return (
     <nav className="flex flex-col gap-0.5">
       {NAV_ITEMS.map(({ to, label, icon: Icon, exact }) => (
@@ -22,7 +18,6 @@ export default function SidenavList({ onItemClick }: SidenavListProps) {
             ].join(" ")
           }
           {...(exact ? { end: true } : {})}
-          onClick={onItemClick}
         >
           <Icon className="h-4 w-4 shrink-0" />
           {label}
