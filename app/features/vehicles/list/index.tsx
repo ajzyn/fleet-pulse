@@ -19,7 +19,7 @@ export default function VehiclesList({ loaderData }: VehiclesListProps) {
   return (
     <Container size="4" p={{ initial: "0", md: "4" }} pt="4">
       <Box px={{ initial: "4", md: "0" }}>
-        <Heading size="3" mb="4">
+        <Heading size="4" mb="8">
           Vehicles
         </Heading>
 

@@ -12,7 +12,7 @@ export function VehiclesFilters({ q, status, fuel, activeCount, onChange }: Vehi
   return (
     <Flex gap="3" wrap="wrap" align="end" mb="4">
       <Flex direction="column" gap="1" flexGrow="1" minWidth="200px" maxWidth="600px">
-        <Text as="label" size="2" htmlFor="filter-q" color="gray">
+        <Text as="label" size="2" htmlFor="filter-q" color="gray" className="hidden md:block">
           Search
         </Text>
         <TextField.Root

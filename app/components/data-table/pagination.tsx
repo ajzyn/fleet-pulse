@@ -8,7 +8,7 @@ interface PaginationProps {
 
 export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   return (
-    <Flex justify="between" align="center" mt="4">
+    <Flex justify="between" align="center" mt="4" px={{ initial: "4", md: "0" }}>
       <span>
         Page {currentPage} of {totalPages}
       </span>
