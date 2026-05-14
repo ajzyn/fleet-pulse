@@ -1,4 +1,4 @@
-import { Box, Container, Heading } from "@radix-ui/themes";
+import { Container, Heading } from "@radix-ui/themes";
 import { DataTable } from "~/components/data-table";
 import { useTableUrlParams } from "~/hooks/use-table-url-params";
 import type { Route } from "../../../routes/vehicles/+types/list";
@@ -17,24 +17,26 @@ export default function VehiclesList({ loaderData }: VehiclesListProps) {
   const { setPage } = useTableUrlParams<FilterKey>();
 
   return (
-    <Container size="4" p={{ initial: "0", md: "4" }} pt="4">
-      <Box px={{ initial: "4", md: "0" }}>
-        <Heading size="4" mb="8">
-          Vehicles
-        </Heading>
+    <Container size="4" p="4" pt="4">
+      <Heading size="4" mb="6">
+        Vehicles
+      </Heading>
 
-        <VehiclesFilters {...filters} />
-      </Box>
+      <VehiclesFilters {...filters} />
 
       <DataTable.Root table={table}>
-        <DataTable.Table>
-          <DataTable.Header fixedWidths />
-          <DataTable.Body
-            isLoading={isLoading}
-            skeletonRows={pageSize}
-            emptyMessage="No vehicles"
-          />
-        </DataTable.Table>
+        <div className="-mx-4 md:mx-0 overflow-x-auto">
+          <div className="px-4 md:px-0 w-fit min-w-full">
+            <DataTable.Table>
+              <DataTable.Header fixedWidths />
+              <DataTable.Body
+                isLoading={isLoading}
+                skeletonRows={pageSize}
+                emptyMessage="No vehicles"
+              />
+            </DataTable.Table>
+          </div>
+        </div>
         <DataTable.Pagination
           totalPages={totalPages}
           currentPage={currentPage}

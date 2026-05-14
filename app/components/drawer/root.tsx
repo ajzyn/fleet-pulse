@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { Box, Flex, Theme } from "@radix-ui/themes";
+import { Flex, Theme } from "@radix-ui/themes";
 import type { ReactNode } from "react";
 
 export type DrawerSize = "sm" | "md" | "lg";
@@ -49,7 +49,7 @@ export function Root({ open, onOpenChange, size = "md", side = "right", children
               className="bg-[var(--color-panel-solid)] shadow-xl"
             >
               {side === "bottom" && (
-                <Box className="mx-auto mt-2 h-1 w-9 rounded-full bg-[var(--gray-a7)]" />
+                <div className="mx-auto mt-2 h-1 w-9 rounded-full bg-[var(--gray-a7)]" />
               )}
               {children}
             </Flex>

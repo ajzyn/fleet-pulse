@@ -30,6 +30,30 @@ export async function action({ request }: Route.ActionArgs) {
   }
 }
 
+interface CacheEntry {
+  data: Awaited<ReturnType<typeof loader>>;
+  ts: number;
+}
+const cache = new Map<string, CacheEntry>();
+const STALE_MS = 30000;
+
+export async function clientLoader({ request, serverLoader }: Route.ClientLoaderArgs) {
+  const key = new URL(request.url).search;
+  const entry = cache.get(key);
+  if (entry && Date.now() - entry.ts < STALE_MS) {
+    return entry.data;
+  }
+  const fresh = await serverLoader();
+  cache.set(key, { data: fresh, ts: Date.now() });
+  return fresh;
+}
+clientLoader.hydrate = true as const;
+
+export async function clientAction({ serverAction }: Route.ClientActionArgs) {
+  cache.clear();
+  return serverAction();
+}
+
 export default function VehiclesRoute({ loaderData }: Route.ComponentProps) {
   return <VehiclesList loaderData={loaderData} />;
 }
