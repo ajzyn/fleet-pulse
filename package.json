@@ -21,7 +21,10 @@
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx db/seed.ts",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
@@ -42,10 +45,12 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
     "@commitlint/cli": "^20.5.2",
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^9.39.4",
     "@faker-js/faker": "^10.4.0",
+    "@playwright/test": "^1.60.0",
     "@react-router/dev": "7.14.0",
     "@react-router/fs-routes": "^7.14.0",
     "@tailwindcss/vite": "^4.2.2",

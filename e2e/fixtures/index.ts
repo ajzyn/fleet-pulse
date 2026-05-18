@@ -1,0 +1,33 @@
+import AxeBuilder from "@axe-core/playwright";
+import * as schema from "@db/schema";
+import { neon } from "@neondatabase/serverless";
+import { test as base, expect, type Page } from "@playwright/test";
+import { drizzle } from "drizzle-orm/neon-http";
+import { VehiclesListPage } from "../pages/vehicles-list.page";
+
+type Db = ReturnType<typeof drizzle<typeof schema>>;
+
+interface Fixtures {
+  db: Db;
+  vehiclesListPage: VehiclesListPage;
+  checkA11y: (page: Page) => Promise<void>;
+}
+
+export const test = base.extend<Fixtures>({
+  db: async ({}, use) => {
+    const url = process.env.DATABASE_URL;
+    if (!url) throw new Error("DATABASE_URL not set in test process");
+    await use(drizzle({ client: neon(url), schema }));
+  },
+  vehiclesListPage: async ({ page }, use) => {
+    await use(new VehiclesListPage(page));
+  },
+  checkA11y: async ({}, use) => {
+    await use(async (page) => {
+      const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
+      expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual([]);
+    });
+  },
+});
+
+export { expect };
