@@ -1,4 +1,4 @@
-import { test, expect } from "../../fixtures";
+import { expect, test } from "../../fixtures";
 
 test.describe("Vehicles list", () => {
   test("renders table with seeded rows", async ({ vehiclesListPage, page }) => {
@@ -17,5 +17,31 @@ test.describe("Vehicles list", () => {
   test("a11y check on /vehicles", async ({ vehiclesListPage, page, checkA11y }) => {
     await vehiclesListPage.goto();
     await checkA11y(page);
+  });
+
+  test("updates vehicel status and persists in db", async ({
+    vehiclesListPage,
+    page,
+    db,
+    createVehicle,
+  }) => {
+    const vehicle = await createVehicle({
+      status: "active",
+      plateNumber: `E2E-${Date.now().toString()}`,
+    });
+
+    await page.goto(`/vehicles?q=${vehicle.plateNumber}`);
+
+    const row = vehiclesListPage.rowByPlate(vehicle.plateNumber);
+    await row.getByRole("button", { name: new RegExp("change status", "i") }).click();
+    await page.getByRole("menuitem", { name: "In maintenance" }).click();
+
+    await expect(page.getByText("Status updated")).toBeVisible();
+
+    const dbRow = await db.query.vehicles.findFirst({
+      where: (v, { eq }) => eq(v.plateNumber, vehicle.plateNumber),
+    });
+
+    expect(dbRow?.status).toBe("in_maintenance");
   });
 });
