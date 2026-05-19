@@ -19,10 +19,7 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
-    testIdAttribute: "data-testid",
   },
-  expect: { timeout: 5_000 },
-  timeout: 30_000,
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
     command: "npm run build && npm run start",

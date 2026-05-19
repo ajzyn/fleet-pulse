@@ -1,5 +1,5 @@
-import type { Locator, Page } from "@playwright/test";
 import type { Vehicle } from "@db/schema";
+import type { Locator, Page } from "@playwright/test";
 import { getStatusLabel } from "~/features/vehicles/list/utils/status-presentation";
 
 export class VehiclesListPage {
@@ -10,8 +10,8 @@ export class VehiclesListPage {
 
   constructor(page: Page) {
     this.table = page.getByRole("table");
-    this.statusFilter = page.getByLabel("Status");
-    this.fuelFilter = page.getByLabel("Fuel type");
+    this.statusFilter = page.getByRole("combobox", { name: "Status" });
+    this.fuelFilter = page.getByRole("combobox", { name: "Fuel type" });
     this.page = page;
   }
 
