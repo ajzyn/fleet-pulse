@@ -1,12 +1,12 @@
 # FleetPulse
 
-Fleet management analytics dashboard. Portfolio project - built around virtualized tables, server-side data flow, charts, and optimistic updates with rollback, tests (focues on the highest-risk paths)
+Fleet management analytics dashboard. Portfolio project - built around virtualized tables, server-side data flow, charts, and optimistic updates with rollback, tests
 
 Simulated fleet of 200-500 vehicles with ~2 years of history (~1.5M trips, ~500k fuel transactions, ~30k maintenance events)
 
 ## Stack
 
-React 19, React Router v7 (framework mode), TypeScript, Tailwind v4, Radix Themes, TanStack Table + Virtual, Recharts, Vitest, RTL, Drizzle ORM + Neon Postgres
+React 19, React Router v7 (framework mode), TypeScript, Tailwind v4, Radix Themes, TanStack Table + Virtual, Recharts, Vitest, RTL, Playwright, Drizzle ORM + Neon Postgres
 
 Node 22+, npm
 
