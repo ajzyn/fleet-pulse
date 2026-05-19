@@ -6,3 +6,6 @@
 /.react-router/
 /build/
 .gstack/
+
+/test-results/
+/playwright-report/

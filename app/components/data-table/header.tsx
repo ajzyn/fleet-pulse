@@ -30,7 +30,6 @@ function SortableHeaderCell({ header, style }: SortableHeaderCellProps) {
           : undefined
       }
       tabIndex={canSort ? 0 : undefined}
-      role={canSort ? "button" : undefined}
       aria-sort={ariaSort}
       style={{ cursor: canSort ? "pointer" : undefined, userSelect: "none", ...style }}
     >

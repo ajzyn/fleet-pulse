@@ -1,6 +1,6 @@
 import type { Vehicle } from "@db/schema";
 import { Pencil1Icon } from "@radix-ui/react-icons";
-import { Badge, Flex } from "@radix-ui/themes";
+import { Badge, Button } from "@radix-ui/themes";
 import { DropdownMenu } from "radix-ui";
 import { DropdownMenuContent } from "~/components/dropdown-menu/content";
 import { ConfirmDialog } from "~/components/feedback/confirm-dialog";
@@ -19,7 +19,12 @@ export function VehicleStatusCell({ vehicle }: VehicleStatusCellProps) {
     <>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
-          <Flex gap="2" align="center" className="cursor-pointer">
+          <Button
+            variant="ghost"
+            color="gray"
+            className="cursor-pointer"
+            aria-label={`Change status (current: ${getStatusLabel(optimisticStatus)})`}
+          >
             <Badge
               color={statusColor[optimisticStatus]}
               variant="soft"
@@ -28,7 +33,7 @@ export function VehicleStatusCell({ vehicle }: VehicleStatusCellProps) {
               {getStatusLabel(optimisticStatus)}
             </Badge>
             <Pencil1Icon width="12" height="12" aria-hidden />
-          </Flex>
+          </Button>
         </DropdownMenu.Trigger>
 
         <DropdownMenuContent>

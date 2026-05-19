@@ -54,5 +54,11 @@ export default defineConfig(
     files: ["*.config.{ts,js,mjs}", "react-router.config.ts"],
     extends: [tseslint.configs.disableTypeChecked],
   },
+  {
+    files: ["e2e/**/*.{ts,tsx}"],
+    rules: {
+      "no-empty-pattern": "off",
+    },
+  },
   eslintConfigPrettier,
 );
