@@ -1,5 +1,4 @@
 import { defineConfig, devices } from "@playwright/test";
-import "dotenv/config";
 
 const BASE_URL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
 
@@ -12,8 +11,6 @@ export default defineConfig({
   reporter: process.env.CI
     ? [["github"], ["html", { open: "never" }]]
     : [["list"], ["html", { open: "never" }]],
-  globalSetup: "./e2e/support/global-setup.ts",
-  globalTeardown: "./e2e/support/global-teardown.ts",
   use: {
     baseURL: BASE_URL,
     trace: "on-first-retry",
@@ -24,7 +21,7 @@ export default defineConfig({
   webServer: {
     command: "npm run build && npm run start",
     url: BASE_URL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 180_000,
     stdout: "pipe",
     stderr: "pipe",
