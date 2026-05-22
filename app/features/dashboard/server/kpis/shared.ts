@@ -1,3 +1,5 @@
+import { subDays } from "date-fns";
+
 export type DeltaDirection = "up" | "down" | "flat";
 
 export const computeDeltaWithPercentage = (current: number, prior: number) => {
@@ -15,8 +17,7 @@ export const buildRollingSparkline = (
 ): number[] => {
   const sparkline: number[] = [];
   for (let i = days - 1; i >= 0; i--) {
-    const date = new Date(today);
-    date.setUTCDate(date.getUTCDate() - i);
+    const date = subDays(today, i);
     sparkline.push(valueAtKey(date.toISOString().slice(0, 10)));
   }
   return sparkline;

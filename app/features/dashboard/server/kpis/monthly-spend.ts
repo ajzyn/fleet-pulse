@@ -1,5 +1,6 @@
 import { db } from "@db/client";
 import { fuelTransactions, maintenanceEvents } from "@db/schema";
+import { getDaysInMonth } from "date-fns";
 import { and, gte, isNotNull, lt, sum } from "drizzle-orm";
 import { getFirstColumnValue, toDayMap } from "~/lib/server/rows.server";
 import { dateTruncSql, startOfMonthMinusMonthsSql, startOfMonthSql } from "~/lib/server/sql.server";
@@ -91,7 +92,7 @@ export const getMonthlySpend = async (): Promise<MonthlySpend> => {
   const year = today.getUTCFullYear();
   const monthIndex = today.getUTCMonth();
   const daysElapsed = today.getUTCDate();
-  const daysInMonth = new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
+  const daysInMonth = getDaysInMonth(today);
 
   const actualMtd = fuelMtd + maintenanceMtd;
   const threeMonthAvg = (fuel3m + maintenance3m) / 3;

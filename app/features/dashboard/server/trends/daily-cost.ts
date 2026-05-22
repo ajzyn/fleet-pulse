@@ -1,5 +1,6 @@
 import { db } from "@db/client";
 import { fuelTransactions, maintenanceEvents } from "@db/schema";
+import { subDays } from "date-fns";
 import { and, gte, isNotNull, sum } from "drizzle-orm";
 import { toDayMap } from "~/lib/server/rows.server";
 import { dateTruncSql, nowMinusDaysSql } from "~/lib/server/sql.server";
@@ -53,8 +54,7 @@ export const getDailyCost30d = async (): Promise<DailyCostPoint[]> => {
   const result: DailyCostPoint[] = [];
 
   for (let i = WINDOW_DAYS - 1; i >= 0; i--) {
-    const date = new Date(today);
-    date.setUTCDate(date.getUTCDate() - i);
+    const date = subDays(today, i);
     const dayISO = date.toISOString().slice(0, 10);
     const maintenanceCost = maintenanceByDay.get(dayISO) ?? 0;
     const fuelCost = fuelByDay.get(dayISO) ?? 0;
