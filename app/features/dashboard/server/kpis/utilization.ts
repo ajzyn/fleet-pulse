@@ -1,15 +1,9 @@
 import { db } from "@db/client";
 import { trips, vehicles } from "@db/schema";
-import { and, count, eq, gte, lt, sql, sum } from "drizzle-orm";
-import {
-  buildRollingSparkline,
-  computeDeltaWithPercentage,
-  daysAgoSql,
-  getFirstColumnValue,
-  startOfDayDaysAgoSql,
-  toDayMap,
-  type DeltaDirection,
-} from "./shared";
+import { and, count, eq, gte, lt, sum } from "drizzle-orm";
+import { getFirstColumnValue, toDayMap } from "~/lib/server/rows.server";
+import { dateTruncSql, nowMinusDaysSql, startOfDayMinusDaysSql } from "~/lib/server/sql.server";
+import { buildRollingSparkline, computeDeltaWithPercentage, type DeltaDirection } from "./shared";
 
 export interface Utilization {
   kmPerDay: number;
@@ -20,28 +14,31 @@ export interface Utilization {
 const UTILIZATION_WINDOW_DAYS = 30;
 
 export const getUtilization = async (): Promise<Utilization> => {
-  const currentSinceSql = daysAgoSql(UTILIZATION_WINDOW_DAYS);
-  const priorSinceSql = daysAgoSql(UTILIZATION_WINDOW_DAYS * 2);
-  const sparklineSinceSql = startOfDayDaysAgoSql(UTILIZATION_WINDOW_DAYS - 1);
+  const currentWindowStartSql = nowMinusDaysSql(UTILIZATION_WINDOW_DAYS);
+  const priorWindowStartSql = nowMinusDaysSql(UTILIZATION_WINDOW_DAYS * 2);
+  const sparklineWindowStartSql = startOfDayMinusDaysSql(UTILIZATION_WINDOW_DAYS - 1);
+  const tripStartedDayExpr = dateTruncSql("day", trips.startedAt);
 
   const [currentKmRows, priorKmRows, activeVehicleRows, sparklineRows] = await Promise.all([
     db
       .select({ totalKm: sum(trips.distanceKm).mapWith(Number) })
       .from(trips)
-      .where(gte(trips.startedAt, currentSinceSql)),
+      .where(gte(trips.startedAt, currentWindowStartSql)),
     db
       .select({ totalKm: sum(trips.distanceKm).mapWith(Number) })
       .from(trips)
-      .where(and(gte(trips.startedAt, priorSinceSql), lt(trips.startedAt, currentSinceSql))),
+      .where(
+        and(gte(trips.startedAt, priorWindowStartSql), lt(trips.startedAt, currentWindowStartSql)),
+      ),
     db.select({ count: count() }).from(vehicles).where(eq(vehicles.status, "active")),
     db
       .select({
-        day: sql<Date>`date_trunc('day', ${trips.startedAt})`,
+        day: tripStartedDayExpr,
         totalKm: sum(trips.distanceKm).mapWith(Number),
       })
       .from(trips)
-      .where(gte(trips.startedAt, sparklineSinceSql))
-      .groupBy(sql`date_trunc('day', ${trips.startedAt})`),
+      .where(gte(trips.startedAt, sparklineWindowStartSql))
+      .groupBy(tripStartedDayExpr),
   ]);
 
   const currentKm = getFirstColumnValue(currentKmRows, "totalKm");

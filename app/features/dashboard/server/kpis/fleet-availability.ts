@@ -1,14 +1,9 @@
 import { db } from "@db/client";
 import { trips, vehicles } from "@db/schema";
-import { and, countDistinct, gte, lt, ne, sql } from "drizzle-orm";
-import {
-  buildRollingSparkline,
-  daysAgoSql,
-  getFirstColumnValue,
-  startOfDayDaysAgoSql,
-  toDayMap,
-  type DeltaDirection,
-} from "./shared";
+import { and, countDistinct, gte, lt, ne } from "drizzle-orm";
+import { getFirstColumnValue, toDayMap } from "~/lib/server/rows.server";
+import { dateTruncSql, nowMinusDaysSql, startOfDayMinusDaysSql } from "~/lib/server/sql.server";
+import { buildRollingSparkline, type DeltaDirection } from "./shared";
 
 export interface FleetAvailability {
   activeNow: number;
@@ -21,20 +16,21 @@ const SPARKLINE_DAYS = 14;
 const WEEK_DAYS = 7;
 
 export const getFleetAvailability = async (): Promise<FleetAvailability> => {
-  const currentWeekSinceSql = daysAgoSql(WEEK_DAYS);
-  const priorWeekSinceSql = daysAgoSql(WEEK_DAYS * 2);
-  const sparklineSinceSql = startOfDayDaysAgoSql(SPARKLINE_DAYS);
+  const currentWindowStartSql = nowMinusDaysSql(WEEK_DAYS);
+  const priorWindowStartSql = nowMinusDaysSql(WEEK_DAYS * 2);
+  const sparklineWindowStartSql = startOfDayMinusDaysSql(SPARKLINE_DAYS);
+  const tripStartedDayExpr = dateTruncSql("day", trips.startedAt);
 
   const [activeNowRows, activePriorRows, totalRows, sparklineRows] = await Promise.all([
     db
       .select({ count: countDistinct(trips.vehicleId).mapWith(Number) })
       .from(trips)
-      .where(gte(trips.startedAt, currentWeekSinceSql)),
+      .where(gte(trips.startedAt, currentWindowStartSql)),
     db
       .select({ count: countDistinct(trips.vehicleId).mapWith(Number) })
       .from(trips)
       .where(
-        and(gte(trips.startedAt, priorWeekSinceSql), lt(trips.startedAt, currentWeekSinceSql)),
+        and(gte(trips.startedAt, priorWindowStartSql), lt(trips.startedAt, currentWindowStartSql)),
       ),
     db
       .select({ count: countDistinct(vehicles.id).mapWith(Number) })
@@ -43,11 +39,11 @@ export const getFleetAvailability = async (): Promise<FleetAvailability> => {
     db
       .select({
         count: countDistinct(trips.vehicleId).mapWith(Number),
-        day: sql<Date>`date_trunc('day', ${trips.startedAt})`,
+        day: tripStartedDayExpr,
       })
       .from(trips)
-      .where(gte(trips.startedAt, sparklineSinceSql))
-      .groupBy(sql`date_trunc('day', ${trips.startedAt})`),
+      .where(gte(trips.startedAt, sparklineWindowStartSql))
+      .groupBy(tripStartedDayExpr),
   ]);
 
   const activeNow = getFirstColumnValue(activeNowRows, "count");

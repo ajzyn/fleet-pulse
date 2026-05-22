@@ -1,12 +1,9 @@
 import { db } from "@db/client";
 import { fuelTransactions, maintenanceEvents } from "@db/schema";
-import { and, gte, isNotNull, lt, sql, sum } from "drizzle-orm";
-import {
-  computeDeltaWithPercentage,
-  getFirstColumnValue,
-  toDayMap,
-  type DeltaDirection,
-} from "./shared";
+import { and, gte, isNotNull, lt, sum } from "drizzle-orm";
+import { getFirstColumnValue, toDayMap } from "~/lib/server/rows.server";
+import { dateTruncSql, startOfMonthMinusMonthsSql, startOfMonthSql } from "~/lib/server/sql.server";
+import { computeDeltaWithPercentage, type DeltaDirection } from "./shared";
 
 export interface MonthlySpend {
   actualMtd: number;
@@ -17,8 +14,10 @@ export interface MonthlySpend {
 }
 
 export const getMonthlySpend = async (): Promise<MonthlySpend> => {
-  const currentMonthSinceSql = sql`date_trunc('month', now())`;
-  const last3MonthsSinceSql = sql`date_trunc('month', now()) - interval '3 months'`;
+  const currentMonthStartSql = startOfMonthSql();
+  const threeMonthsAgoStartSql = startOfMonthMinusMonthsSql(3);
+  const fuelTransactionDayExpr = dateTruncSql("day", fuelTransactions.transactionAt);
+  const maintenanceEventDayExpr = dateTruncSql("day", maintenanceEvents.eventAt);
 
   const [
     fuelMtdRows,
@@ -31,13 +30,13 @@ export const getMonthlySpend = async (): Promise<MonthlySpend> => {
     db
       .select({ totalCost: sum(fuelTransactions.cost).mapWith(Number) })
       .from(fuelTransactions)
-      .where(gte(fuelTransactions.transactionAt, currentMonthSinceSql)),
+      .where(gte(fuelTransactions.transactionAt, currentMonthStartSql)),
     db
       .select({ totalCost: sum(maintenanceEvents.cost).mapWith(Number) })
       .from(maintenanceEvents)
       .where(
         and(
-          gte(maintenanceEvents.eventAt, currentMonthSinceSql),
+          gte(maintenanceEvents.eventAt, currentMonthStartSql),
           isNotNull(maintenanceEvents.cost),
         ),
       ),
@@ -46,8 +45,8 @@ export const getMonthlySpend = async (): Promise<MonthlySpend> => {
       .from(fuelTransactions)
       .where(
         and(
-          gte(fuelTransactions.transactionAt, last3MonthsSinceSql),
-          lt(fuelTransactions.transactionAt, currentMonthSinceSql),
+          gte(fuelTransactions.transactionAt, threeMonthsAgoStartSql),
+          lt(fuelTransactions.transactionAt, currentMonthStartSql),
         ),
       ),
     db
@@ -55,32 +54,32 @@ export const getMonthlySpend = async (): Promise<MonthlySpend> => {
       .from(maintenanceEvents)
       .where(
         and(
-          gte(maintenanceEvents.eventAt, last3MonthsSinceSql),
-          lt(maintenanceEvents.eventAt, currentMonthSinceSql),
+          gte(maintenanceEvents.eventAt, threeMonthsAgoStartSql),
+          lt(maintenanceEvents.eventAt, currentMonthStartSql),
           isNotNull(maintenanceEvents.cost),
         ),
       ),
     db
       .select({
         totalCost: sum(fuelTransactions.cost).mapWith(Number),
-        day: sql<Date>`date_trunc('day', ${fuelTransactions.transactionAt})`,
+        day: fuelTransactionDayExpr,
       })
       .from(fuelTransactions)
-      .where(gte(fuelTransactions.transactionAt, currentMonthSinceSql))
-      .groupBy(sql`date_trunc('day', ${fuelTransactions.transactionAt})`),
+      .where(gte(fuelTransactions.transactionAt, currentMonthStartSql))
+      .groupBy(fuelTransactionDayExpr),
     db
       .select({
         totalCost: sum(maintenanceEvents.cost).mapWith(Number),
-        day: sql<Date>`date_trunc('day', ${maintenanceEvents.eventAt})`,
+        day: maintenanceEventDayExpr,
       })
       .from(maintenanceEvents)
       .where(
         and(
-          gte(maintenanceEvents.eventAt, currentMonthSinceSql),
+          gte(maintenanceEvents.eventAt, currentMonthStartSql),
           isNotNull(maintenanceEvents.cost),
         ),
       )
-      .groupBy(sql`date_trunc('day', ${maintenanceEvents.eventAt})`),
+      .groupBy(maintenanceEventDayExpr),
   ]);
 
   const fuelMtd = getFirstColumnValue(fuelMtdRows, "totalCost");

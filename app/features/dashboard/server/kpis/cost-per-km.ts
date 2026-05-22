@@ -1,15 +1,9 @@
 import { db } from "@db/client";
 import { fuelTransactions, maintenanceEvents, trips } from "@db/schema";
-import { and, gte, isNotNull, lt, sql, sum } from "drizzle-orm";
-import {
-  buildRollingSparkline,
-  computeDeltaWithPercentage,
-  daysAgoSql,
-  getFirstColumnValue,
-  startOfDayDaysAgoSql,
-  toDayMap,
-  type DeltaDirection,
-} from "./shared";
+import { and, gte, isNotNull, lt, sum } from "drizzle-orm";
+import { getFirstColumnValue, toDayMap } from "~/lib/server/rows.server";
+import { dateTruncSql, nowMinusDaysSql, startOfDayMinusDaysSql } from "~/lib/server/sql.server";
+import { buildRollingSparkline, computeDeltaWithPercentage, type DeltaDirection } from "./shared";
 
 export interface CostPerKm {
   value: number;
@@ -20,9 +14,12 @@ export interface CostPerKm {
 const COST_PER_KM_WINDOW_DAYS = 30;
 
 export const getCostPerKm = async (): Promise<CostPerKm> => {
-  const currentSinceSql = daysAgoSql(COST_PER_KM_WINDOW_DAYS);
-  const priorSinceSql = daysAgoSql(COST_PER_KM_WINDOW_DAYS * 2);
-  const sparklineSinceSql = startOfDayDaysAgoSql(COST_PER_KM_WINDOW_DAYS - 1);
+  const currentWindowStartSql = nowMinusDaysSql(COST_PER_KM_WINDOW_DAYS);
+  const priorWindowStartSql = nowMinusDaysSql(COST_PER_KM_WINDOW_DAYS * 2);
+  const sparklineWindowStartSql = startOfDayMinusDaysSql(COST_PER_KM_WINDOW_DAYS - 1);
+  const fuelTransactionDayExpr = dateTruncSql("day", fuelTransactions.transactionAt);
+  const maintenanceEventDayExpr = dateTruncSql("day", maintenanceEvents.eventAt);
+  const tripStartedDayExpr = dateTruncSql("day", trips.startedAt);
 
   const [
     currentFuelRows,
@@ -38,66 +35,74 @@ export const getCostPerKm = async (): Promise<CostPerKm> => {
     db
       .select({ totalCost: sum(fuelTransactions.cost).mapWith(Number) })
       .from(fuelTransactions)
-      .where(gte(fuelTransactions.transactionAt, currentSinceSql)),
+      .where(gte(fuelTransactions.transactionAt, currentWindowStartSql)),
     db
       .select({ totalCost: sum(fuelTransactions.cost).mapWith(Number) })
       .from(fuelTransactions)
       .where(
         and(
-          gte(fuelTransactions.transactionAt, priorSinceSql),
-          lt(fuelTransactions.transactionAt, currentSinceSql),
+          gte(fuelTransactions.transactionAt, priorWindowStartSql),
+          lt(fuelTransactions.transactionAt, currentWindowStartSql),
         ),
       ),
     db
       .select({ totalCost: sum(maintenanceEvents.cost).mapWith(Number) })
       .from(maintenanceEvents)
       .where(
-        and(gte(maintenanceEvents.eventAt, currentSinceSql), isNotNull(maintenanceEvents.cost)),
+        and(
+          gte(maintenanceEvents.eventAt, currentWindowStartSql),
+          isNotNull(maintenanceEvents.cost),
+        ),
       ),
     db
       .select({ totalCost: sum(maintenanceEvents.cost).mapWith(Number) })
       .from(maintenanceEvents)
       .where(
         and(
-          gte(maintenanceEvents.eventAt, priorSinceSql),
-          lt(maintenanceEvents.eventAt, currentSinceSql),
+          gte(maintenanceEvents.eventAt, priorWindowStartSql),
+          lt(maintenanceEvents.eventAt, currentWindowStartSql),
           isNotNull(maintenanceEvents.cost),
         ),
       ),
     db
       .select({ totalKm: sum(trips.distanceKm).mapWith(Number) })
       .from(trips)
-      .where(gte(trips.startedAt, currentSinceSql)),
+      .where(gte(trips.startedAt, currentWindowStartSql)),
     db
       .select({ totalKm: sum(trips.distanceKm).mapWith(Number) })
       .from(trips)
-      .where(and(gte(trips.startedAt, priorSinceSql), lt(trips.startedAt, currentSinceSql))),
+      .where(
+        and(gte(trips.startedAt, priorWindowStartSql), lt(trips.startedAt, currentWindowStartSql)),
+      ),
     db
       .select({
         totalCost: sum(fuelTransactions.cost).mapWith(Number),
-        day: sql<Date>`date_trunc('day', ${fuelTransactions.transactionAt})`,
+        day: fuelTransactionDayExpr,
       })
       .from(fuelTransactions)
-      .where(gte(fuelTransactions.transactionAt, sparklineSinceSql))
-      .groupBy(sql`date_trunc('day', ${fuelTransactions.transactionAt})`),
+      .where(gte(fuelTransactions.transactionAt, sparklineWindowStartSql))
+      .groupBy(fuelTransactionDayExpr),
     db
       .select({
         totalCost: sum(maintenanceEvents.cost).mapWith(Number),
-        day: sql<Date>`date_trunc('day', ${maintenanceEvents.eventAt})`,
+        day: maintenanceEventDayExpr,
       })
       .from(maintenanceEvents)
       .where(
-        and(gte(maintenanceEvents.eventAt, sparklineSinceSql), isNotNull(maintenanceEvents.cost)),
+        and(
+          gte(maintenanceEvents.eventAt, sparklineWindowStartSql),
+          isNotNull(maintenanceEvents.cost),
+        ),
       )
-      .groupBy(sql`date_trunc('day', ${maintenanceEvents.eventAt})`),
+      .groupBy(maintenanceEventDayExpr),
     db
       .select({
         totalKm: sum(trips.distanceKm).mapWith(Number),
-        day: sql<Date>`date_trunc('day', ${trips.startedAt})`,
+        day: tripStartedDayExpr,
       })
       .from(trips)
-      .where(gte(trips.startedAt, sparklineSinceSql))
-      .groupBy(sql`date_trunc('day', ${trips.startedAt})`),
+      .where(gte(trips.startedAt, sparklineWindowStartSql))
+      .groupBy(tripStartedDayExpr),
   ]);
 
   const currentKm = getFirstColumnValue(currentKmRows, "totalKm");
