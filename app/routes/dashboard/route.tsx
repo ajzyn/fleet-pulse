@@ -1,16 +1,17 @@
 import { RouteErrorFallback } from "~/components/feedback/route-error-fallback";
-// import { loadDashboard } from "~/features/dashboard/server/loader";
+import { loadDashboard } from "~/features/dashboard/server/loader.server";
 import type { Route } from "./+types/route";
 
 export function meta() {
   return [{ title: "Dashboard — FleetPulse" }];
 }
 
-// export async function loader() {
-//   return loadDashboard();
-// }
+export async function loader() {
+  return await loadDashboard();
+}
 
-export default function DashboardRoute() {
+export default function DashboardRoute({ loaderData }: Route.ComponentProps) {
+  console.log(loaderData);
   return <>asda</>;
   // return (
   //   <div className="space-y-4 p-4">
