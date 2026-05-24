@@ -8,6 +8,7 @@ export interface DashboardData {
   kpis: LoaderState<DashboardKpis>;
   attention: LoaderState<AttentionItem[]>;
   trends: LoaderState<DashboardTrends>;
+  generatedAt: string;
 }
 
 export const loadDashboard = async (): Promise<DashboardData> => {
@@ -21,5 +22,6 @@ export const loadDashboard = async (): Promise<DashboardData> => {
     kpis: settledToLoaderState(kpis),
     attention: settledToLoaderState(attention),
     trends: settledToLoaderState(trends),
+    generatedAt: new Date().toISOString(),
   };
 };
