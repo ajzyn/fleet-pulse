@@ -8,5 +8,5 @@ export const sanitizeError = (err: unknown, context: Record<string, unknown> = {
   const requestId = logError(err, context);
   return import.meta.env.DEV
     ? String(err instanceof Error ? (err.stack ?? err.message) : err)
-    : `Nie udało się pobrać danych. ID błędu: ${requestId}`;
+    : `Nie udało się pobrać danych. Spróbuj ponownie później. ID błędu: ${requestId}`;
 };
