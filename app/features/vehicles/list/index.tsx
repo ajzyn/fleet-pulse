@@ -1,5 +1,5 @@
-import { Container, Heading } from "@radix-ui/themes";
 import { DataTable } from "~/components/data-table";
+import { Page } from "~/components/page";
 import { useTableUrlParams } from "~/hooks/use-table-url-params";
 import type { Route } from "../../../routes/vehicles/+types/list";
 import { VehiclesFilters } from "./components/vehicles-filters";
@@ -17,32 +17,29 @@ export default function VehiclesList({ loaderData }: VehiclesListProps) {
   const { setPage } = useTableUrlParams<FilterKey>();
 
   return (
-    <Container size="4" p="4" pt="4">
-      <Heading size="4" mb="6">
-        Vehicles
-      </Heading>
-
-      <VehiclesFilters {...filters} />
-
-      <DataTable.Root table={table}>
-        <div className="-mx-4 md:mx-0 overflow-x-auto">
-          <div className="px-4 md:px-0 w-fit min-w-full">
-            <DataTable.Table>
-              <DataTable.Header fixedWidths />
-              <DataTable.Body
-                isLoading={isLoading}
-                skeletonRows={pageSize}
-                emptyMessage="No vehicles"
-              />
-            </DataTable.Table>
+    <Page.Root>
+      <Page.Header title="Vehicles" actions={<VehiclesFilters {...filters} />} />
+      <Page.Body>
+        <DataTable.Root table={table}>
+          <div className="-mx-4 md:mx-0 overflow-x-auto">
+            <div className="px-4 md:px-0 w-fit min-w-full">
+              <DataTable.Table>
+                <DataTable.Header fixedWidths />
+                <DataTable.Body
+                  isLoading={isLoading}
+                  skeletonRows={pageSize}
+                  emptyMessage="No vehicles"
+                />
+              </DataTable.Table>
+            </div>
           </div>
-        </div>
-        <DataTable.Pagination
-          totalPages={totalPages}
-          currentPage={currentPage}
-          onPageChange={setPage}
-        />
-      </DataTable.Root>
-    </Container>
+          <DataTable.Pagination
+            totalPages={totalPages}
+            currentPage={currentPage}
+            onPageChange={setPage}
+          />
+        </DataTable.Root>
+      </Page.Body>
+    </Page.Root>
   );
 }
