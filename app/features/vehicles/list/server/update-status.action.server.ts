@@ -1,8 +1,8 @@
 import { data } from "react-router";
 import z from "zod";
-import { ActionErrorKind } from "~/lib/action";
-import { updateVehicleStatus } from "./update-status.repository";
-import { updateVehicleStatusSchema } from "./update-status.schema";
+import { ActionErrorKind } from "~/lib/server/action";
+import { updateVehicleStatus } from "./update-status.repository.server";
+import { updateVehicleStatusSchema } from "./update-status.schema.server";
 
 export async function handleUpdateStatus(formData: FormData) {
   const parsed = updateVehicleStatusSchema.safeParse(Object.fromEntries(formData));

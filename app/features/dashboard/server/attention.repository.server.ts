@@ -1,6 +1,6 @@
 import { MAX_ATTENTION_ITEMS, type AttentionItem } from "./attention/config";
 import { collectChips, computeSeverityScore } from "./attention/chips";
-import { loadAttentionRows } from "./attention/queries";
+import { loadAttentionRows } from "./attention/load-rows.query.server";
 
 export const getNeedsAttention = async (): Promise<AttentionItem[]> => {
   const rows = await loadAttentionRows();

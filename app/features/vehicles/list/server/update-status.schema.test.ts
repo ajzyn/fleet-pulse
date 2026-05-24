@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { updateVehicleStatusSchema } from "./update-status.schema";
+import { updateVehicleStatusSchema } from "./update-status.schema.server";
 
 const VALID_ID = "00000000-0000-4000-8000-000000000001";
 const VALID_UPDATED_AT = "2026-01-15T10:00:00.000Z";

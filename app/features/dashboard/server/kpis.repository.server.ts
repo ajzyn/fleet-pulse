@@ -1,7 +1,10 @@
-import { getCostPerKm, type CostPerKm } from "./kpis/cost-per-km";
-import { getFleetAvailability, type FleetAvailability } from "./kpis/fleet-availability";
-import { getMonthlySpend, type MonthlySpend } from "./kpis/monthly-spend";
-import { getUtilization, type Utilization } from "./kpis/utilization";
+import { getCostPerKm, type CostPerKm } from "./kpis/cost-per-km.repository.server";
+import {
+  getFleetAvailability,
+  type FleetAvailability,
+} from "./kpis/fleet-availability.repository.server";
+import { getMonthlySpend, type MonthlySpend } from "./kpis/monthly-spend.repository.server";
+import { getUtilization, type Utilization } from "./kpis/utilization.repository.server";
 
 export interface DashboardKpis {
   fleetAvailability: FleetAvailability;

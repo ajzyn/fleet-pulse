@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useFetcher, useRevalidator } from "react-router";
 import { toast } from "sonner";
 import { useDisclosure } from "~/hooks/use-disclosure";
-import { ActionErrorKind, INTENT_FIELD } from "~/lib/action";
+import { ActionErrorKind, INTENT_FIELD } from "~/lib/server/action";
 import type { action } from "~/routes/vehicles/list";
 import { VEHICLES_INTENT } from "../server/intents";
 import { getStatusLabel } from "../utils/status-presentation";
