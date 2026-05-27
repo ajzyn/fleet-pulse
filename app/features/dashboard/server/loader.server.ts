@@ -1,12 +1,12 @@
 import { settledToLoaderState, type LoaderState } from "~/lib/server/loader";
 import { getNeedsAttention } from "./attention.repository.server";
-import type { AttentionItem } from "./attention/config";
+import type { AttentionData } from "./attention/config";
 import { getKpis, type DashboardKpis } from "./kpis.repository.server";
 import { getTrends, type DashboardTrends } from "./trends.repository.server";
 
 export interface DashboardData {
   kpis: LoaderState<DashboardKpis>;
-  attention: LoaderState<AttentionItem[]>;
+  attention: LoaderState<AttentionData>;
   trends: LoaderState<DashboardTrends>;
   generatedAt: string;
 }

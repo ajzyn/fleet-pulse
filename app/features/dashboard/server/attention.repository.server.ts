@@ -1,8 +1,8 @@
 import { collectChips, computeSeverityScore } from "./attention/chips";
-import { MAX_ATTENTION_ITEMS, type AttentionItem } from "./attention/config";
+import { MAX_ATTENTION_ITEMS, type AttentionData, type AttentionItem } from "./attention/config";
 import { loadAttentionRows } from "./attention/load-rows.query.server";
 
-export const getNeedsAttention = async (): Promise<AttentionItem[]> => {
+export const getNeedsAttention = async (): Promise<AttentionData> => {
   const rows = await loadAttentionRows();
   const nowMs = Date.now();
   const items: AttentionItem[] = [];
@@ -24,5 +24,12 @@ export const getNeedsAttention = async (): Promise<AttentionItem[]> => {
     });
   }
 
-  return items.sort((a, b) => b.severityScore - a.severityScore).slice(0, MAX_ATTENTION_ITEMS);
+  const sortedItems = items
+    .sort((a, b) => b.severityScore - a.severityScore)
+    .slice(0, MAX_ATTENTION_ITEMS);
+
+  return {
+    items: sortedItems,
+    totalCount: sortedItems.length,
+  };
 };

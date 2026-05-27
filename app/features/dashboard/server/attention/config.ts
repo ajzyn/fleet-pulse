@@ -5,6 +5,11 @@ export type ChipKind =
   | "cost_anomaly"
   | "idle_too_long";
 
+export interface AttentionData {
+  items: AttentionItem[];
+  totalCount: number;
+}
+
 export interface AttentionItem {
   vehicleId: string;
   plateNumber: string;
