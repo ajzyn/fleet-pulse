@@ -6,8 +6,8 @@ import {
   DUE_SOON_THRESHOLD_DAYS,
   RECENT_WINDOW_DAYS,
   SERVICE_INTERVAL_MONTHS,
-  type AttentionRow,
 } from "./config";
+import type { AttentionRow } from "./types";
 
 const isServiceOverdueSql = () =>
   sql<boolean>`${vehicles.lastServiceAt} is not null and now() - ${vehicles.lastServiceAt} > interval '${sql.raw(SERVICE_INTERVAL_MONTHS.toString())} months'`;

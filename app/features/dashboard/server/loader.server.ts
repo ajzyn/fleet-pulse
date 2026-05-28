@@ -1,6 +1,6 @@
 import { settledToLoaderState, type LoaderState } from "~/lib/server/loader";
 import { getNeedsAttention } from "./attention.repository.server";
-import type { AttentionData } from "./attention/config";
+import type { AttentionData } from "./attention/types";
 import { getKpis, type DashboardKpis } from "./kpis.repository.server";
 import { getTrends, type DashboardTrends } from "./trends.repository.server";
 

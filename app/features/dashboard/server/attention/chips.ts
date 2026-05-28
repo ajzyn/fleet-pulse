@@ -6,9 +6,8 @@ import {
   MS_PER_DAY,
   RECENT_WINDOW_DAYS,
   SEVERITY,
-  type AttentionRow,
-  type ChipKind,
 } from "./config";
+import type { AttentionRow, ChipKind } from "./types";
 
 const detectIdle = (row: AttentionRow, nowMs: number): boolean => {
   if (!row.lastStartedAt) return true;
