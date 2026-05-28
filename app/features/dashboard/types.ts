@@ -50,3 +50,20 @@ export type AttentionListState =
       hasOverflow: boolean;
       onRefresh: () => Promise<void>;
     };
+
+export interface DailyCostPointView {
+  date: string;
+  label: string;
+  fuel: number;
+  maintenance: number;
+}
+
+export type DailyCostChartState =
+  | { status: "loading" }
+  | { status: "error"; message: string; onRetry: () => Promise<void> }
+  | { status: "empty"; reason: string; onRefresh: () => Promise<void> }
+  | {
+      status: "success";
+      points: DailyCostPointView[];
+      onRefresh: () => Promise<void>;
+    };

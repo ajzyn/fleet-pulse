@@ -3,6 +3,8 @@ import { dateFormatter } from "~/lib/date-formatter";
 import type { Route } from "../../routes/dashboard/+types/route";
 import { AttentionList } from "./components/attention-list";
 import { HeroKPIs } from "./components/hero-kpis";
+import { TrendsSection } from "./components/trends-section";
+import { useDailyCost } from "./hooks/use-daily-cost";
 import { useFleetKPIs } from "./hooks/use-fleet-kpis";
 import { useNeedsAttention } from "./hooks/use-needs-attention";
 
@@ -13,6 +15,7 @@ interface DashboardProps {
 export function Dashboard({ loaderData }: DashboardProps) {
   const kpiConfigs = useFleetKPIs(loaderData.kpis);
   const attention = useNeedsAttention(loaderData.attention);
+  const dailyCost = useDailyCost(loaderData.trends);
 
   return (
     <Page.Root>
@@ -29,7 +32,10 @@ export function Dashboard({ loaderData }: DashboardProps) {
       />
       <Page.Body>
         <HeroKPIs configs={kpiConfigs} />
-        <AttentionList state={attention} generatedAt={loaderData.generatedAt} />
+        <div className="grid grid-cols-1 3xl:grid-cols-[1fr_2fr] gap-3">
+          <AttentionList state={attention} generatedAt={loaderData.generatedAt} />
+          <TrendsSection dailyCost={dailyCost} />
+        </div>
       </Page.Body>
     </Page.Root>
   );
