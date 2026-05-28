@@ -94,7 +94,7 @@ export const useFleetKPIs = (kpisState: KPIsState): KpiCardConfig[] => {
       state: {
         status: "success",
         value: plnFormatter.format(monthlySpend.actualMtd),
-        subtitle: `Szacowane do końca miesiąca: ${plnFormatter.format(monthlySpend.forecast)}`,
+        subtitle: `Prognoza: ${plnFormatter.format(monthlySpend.forecast)}`,
         delta: {
           value: monthlySpend.delta.percentage / 100,
           format: "percent",

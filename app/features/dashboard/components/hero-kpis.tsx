@@ -9,7 +9,7 @@ interface HeroKPIsProps {
 export function HeroKPIs({ configs }: HeroKPIsProps) {
   return (
     <section aria-label="Kluczowe wskaźniki floty">
-      <Grid columns={{ initial: "1", sm: "2", md: "4" }} gap="3">
+      <Grid columns={{ initial: "2", md: "4" }} gap="3">
         {configs.map((config) => (
           <KpiCard key={config.key} title={config.title} href={config.href} state={config.state} />
         ))}

@@ -11,14 +11,13 @@ interface KPICardProps {
   state: KPICardState;
 }
 
-const CARD_MIN_HEIGHT = "140px";
 const SPARKLINE_SLOT_HEIGHT = "32px";
 
 export function KpiCard({ title, href, state }: KPICardProps) {
   const inner = <KpiCardInner title={title} state={state} />;
 
   return (
-    <Card asChild size="2" className="transition-shadow hover:shadow-md">
+    <Card asChild size={{ initial: "1", md: "2" }} className="transition-shadow hover:shadow-md">
       <Link
         to={href}
         aria-label={title}
@@ -32,8 +31,8 @@ export function KpiCard({ title, href, state }: KPICardProps) {
 
 function KpiCardInner({ title, state }: { title: string; state: KPICardState }) {
   return (
-    <Flex direction="column" gap="2" minHeight={CARD_MIN_HEIGHT}>
-      <Text as="p" size="2" color="gray" weight="medium">
+    <Flex direction="column" gap="1" height="100%">
+      <Text as="p" size="1" color="gray" weight="medium" className="line-clamp-2 min-h-[2lh]">
         {title}
       </Text>
       <KpiCardContent state={state} />
@@ -85,24 +84,24 @@ function KpiCardContent({ state }: { state: KPICardState }) {
   }
 
   return (
-    <Flex direction="column" gap="2" flexGrow="1">
-      <Heading as="h3" size="6" weight="bold">
+    <Flex direction="column" gap="1" flexGrow="1">
+      <Heading as="h3" size={{ initial: "4", md: "6" }} weight="bold">
         {state.value}
       </Heading>
-      {state.subtitle ? (
-        <Text size="1" color="gray">
-          {state.subtitle}
-        </Text>
+      <Text size="1" color="gray" className="min-h-[1lh] line-clamp-1">
+        {state.subtitle ?? " "}
+      </Text>
+      {state.delta || state.sparkline ? (
+        <Flex
+          justify={state.delta && state.sparkline ? "between" : "end"}
+          align="end"
+          gap="2"
+          {...(state.sparkline ? { height: SPARKLINE_SLOT_HEIGHT } : {})}
+          mt="auto"
+        >
+          {state.delta ? <DeltaBadge {...state.delta} /> : null}
+        </Flex>
       ) : null}
-      <Flex
-        justify={state.delta && state.sparkline ? "between" : "end"}
-        align="end"
-        gap="2"
-        mt="auto"
-        height={SPARKLINE_SLOT_HEIGHT}
-      >
-        {state.delta ? <DeltaBadge {...state.delta} /> : null}
-      </Flex>
     </Flex>
   );
 }
