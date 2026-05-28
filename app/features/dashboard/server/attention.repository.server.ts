@@ -25,12 +25,10 @@ export const getNeedsAttention = async (): Promise<AttentionData> => {
     });
   }
 
-  const sortedItems = items
-    .sort((a, b) => b.severityScore - a.severityScore)
-    .slice(0, MAX_ATTENTION_ITEMS);
+  const sortedItems = items.sort((a, b) => b.severityScore - a.severityScore);
 
   return {
-    items: sortedItems,
+    items: sortedItems.slice(0, MAX_ATTENTION_ITEMS),
     totalCount: sortedItems.length,
   };
 };
