@@ -35,6 +35,7 @@ export interface AttentionItemView {
   model: string;
   status: Exclude<AttentionStatus, "retired">;
   chips: AttentionChipView[];
+  topTone: ChipTone;
   href: string;
 }
 

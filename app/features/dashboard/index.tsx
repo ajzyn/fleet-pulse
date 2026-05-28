@@ -1,8 +1,10 @@
 import { Page } from "~/components/page";
 import { dateFormatter } from "~/lib/date-formatter";
 import type { Route } from "../../routes/dashboard/+types/route";
+import { AttentionList } from "./components/attention-list";
 import { HeroKPIs } from "./components/hero-kpis";
 import { useFleetKPIs } from "./hooks/use-fleet-kpis";
+import { useNeedsAttention } from "./hooks/use-needs-attention";
 
 interface DashboardProps {
   loaderData: Route.ComponentProps["loaderData"];
@@ -10,6 +12,7 @@ interface DashboardProps {
 
 export function Dashboard({ loaderData }: DashboardProps) {
   const kpiConfigs = useFleetKPIs(loaderData.kpis);
+  const attention = useNeedsAttention(loaderData.attention);
 
   return (
     <Page.Root>
@@ -26,6 +29,7 @@ export function Dashboard({ loaderData }: DashboardProps) {
       />
       <Page.Body>
         <HeroKPIs configs={kpiConfigs} />
+        <AttentionList state={attention} generatedAt={loaderData.generatedAt} />
       </Page.Body>
     </Page.Root>
   );

@@ -11,6 +11,13 @@ const CHIP_LABELS: Record<ChipKind, { label: string; tone: ChipTone }> = {
   idle_too_long: { label: "Nie jeździ", tone: "info" },
 };
 
+const TONE_RANK: Record<ChipTone, number> = {
+  critical: 4,
+  warning: 3,
+  caution: 2,
+  info: 1,
+};
+
 type AttentionState = Route.ComponentProps["loaderData"]["attention"];
 
 export const useNeedsAttention = (attentionState: AttentionState): AttentionListState => {
@@ -30,19 +37,26 @@ export const useNeedsAttention = (attentionState: AttentionState): AttentionList
     };
   }
 
-  const itemViews: AttentionItemView[] = items.map((item) => ({
-    vehicleId: item.vehicleId,
-    plateNumber: item.plateNumber,
-    make: item.make,
-    model: item.model,
-    status: item.status,
-    chips: item.chips.map((kind) => ({
-      kind,
-      label: CHIP_LABELS[kind].label,
-      tone: CHIP_LABELS[kind].tone,
-    })),
-    href: `/vehicles/${item.vehicleId}`,
-  }));
+  const itemViews: AttentionItemView[] = items.map((item) => {
+    const chips = item.chips
+      .map((kind) => ({
+        kind,
+        label: CHIP_LABELS[kind].label,
+        tone: CHIP_LABELS[kind].tone,
+      }))
+      .sort((a, b) => TONE_RANK[b.tone] - TONE_RANK[a.tone]);
+
+    return {
+      vehicleId: item.vehicleId,
+      plateNumber: item.plateNumber,
+      make: item.make,
+      model: item.model,
+      status: item.status,
+      chips,
+      topTone: chips[0]?.tone ?? "info",
+      href: `/vehicles/${item.vehicleId}`,
+    };
+  });
 
   return {
     status: "success",
