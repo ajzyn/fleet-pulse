@@ -18,6 +18,7 @@ import type { AttentionItemView, AttentionListState, ChipTone } from "../types";
 const ROW_MIN_HEIGHT = "72px";
 const SKELETON_ROWS = 5;
 const VISIBLE_CHIPS = 2;
+const MOBILE_VISIBLE_ROWS = 3;
 
 const CHIP_COLOR: Record<ChipTone, NonNullable<BadgeProps["color"]>> = {
   critical: "red",
@@ -120,39 +121,52 @@ function AttentionListContent({ state, generatedAt }: AttentionListProps) {
     );
   }
 
+  const showAllLink = state.hasOverflow || state.items.length > MOBILE_VISIBLE_ROWS;
+
   return (
     <Box>
       <ul className="list-none p-0 m-0">
-        {state.items.map((item) => (
-          <AttentionRow key={item.vehicleId} item={item} />
+        {state.items.map((item, index) => (
+          <AttentionRow
+            key={item.vehicleId}
+            item={item}
+            className={[
+              index >= MOBILE_VISIBLE_ROWS ? "max-md:hidden" : "",
+              index === MOBILE_VISIBLE_ROWS - 1 ? "max-md:border-b-0" : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+          />
         ))}
-        {state.hasOverflow ? (
-          <Box pt="3" mt="2" className="border-t border-[var(--gray-a4)]">
-            <li>
-              <Link
-                to="/vehicles?needs_attention=true"
-                className="text-[var(--accent-11)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-9)] rounded-2"
-              >
-                <Text size="2">Zobacz wszystkie ({state.totalCount})</Text>
-              </Link>
-            </li>
-          </Box>
-        ) : null}
       </ul>
+      {showAllLink ? (
+        <Box
+          pt="3"
+          mt="2"
+          className={`border-t border-[var(--gray-a4)] ${state.hasOverflow ? "" : "md:hidden"}`}
+        >
+          <Link
+            to="/vehicles?needs_attention=true"
+            className="text-[var(--accent-11)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-9)] rounded-2"
+          >
+            <Text size="2">Zobacz wszystkie ({state.totalCount})</Text>
+          </Link>
+        </Box>
+      ) : null}
     </Box>
   );
 }
 
-function AttentionRow({ item }: { item: AttentionItemView }) {
+function AttentionRow({ item, className = "" }: { item: AttentionItemView; className?: string }) {
   const visibleChips = item.chips.slice(0, VISIBLE_CHIPS);
   const overflowCount = item.chips.length - visibleChips.length;
 
   return (
-    <li className="border-b border-[var(--gray-a3)] last:border-b-0">
+    <li className={`border-b border-[var(--gray-a3)] last:border-b-0 ${className}`}>
       <Link
         to={item.href}
         aria-label={`${item.plateNumber} — ${item.make} ${item.model}`}
-        className={`block py-3 pl-3 pr-2 border-l-4 ${STRIPE_CLASS[item.topTone]} hover:bg-[var(--gray-a2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-9)] rounded-r-2`}
+        className={`block py-3 pl-3 pr-3 border-l-4 ${STRIPE_CLASS[item.topTone]} hover:bg-[var(--gray-a2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-9)] rounded-r-2`}
       >
         <Flex
           direction={{ initial: "column", sm: "row" }}
