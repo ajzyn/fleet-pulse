@@ -3,15 +3,11 @@ import { fuelTransactions, maintenanceEvents, type MaintenanceEvent } from "@db/
 import { and, gte, inArray, isNotNull, sum } from "drizzle-orm";
 import { getFirstColumnValue } from "~/lib/server/rows.server";
 import { startOfMonthSql } from "~/lib/server/sql.server";
+import type { CostBreakdownCategory, CostBreakdownSlice } from "./types";
 
-export type CostBreakdownCategory = "fuel" | "maintenance_planned" | "maintenance_unplanned";
+export type { CostBreakdownCategory, CostBreakdownSlice } from "./types";
+
 type MaintenanceType = MaintenanceEvent["type"];
-
-export interface CostBreakdownSlice {
-  category: CostBreakdownCategory;
-  amount: number;
-  percentage: number;
-}
 
 const PLANNED_MAINTENANCE_TYPES = [
   "oil_change",

@@ -1,5 +1,6 @@
 import type { DeltaBadgeProps } from "./components/delta-badge";
 import type { AttentionStatus, ChipKind } from "./server/attention/types";
+import type { CostBreakdownCategory } from "./server/trends/types";
 
 export type KPICardState =
   | { status: "loading" }
@@ -65,5 +66,24 @@ export type DailyCostChartState =
   | {
       status: "success";
       points: DailyCostPointView[];
+      onRefresh: () => Promise<void>;
+    };
+
+export interface CostBreakdownSliceView {
+  category: CostBreakdownCategory;
+  label: string;
+  color: string;
+  amount: number;
+  percentage: number;
+}
+
+export type CostBreakdownDonutState =
+  | { status: "loading" }
+  | { status: "error"; message: string; onRetry: () => Promise<void> }
+  | { status: "empty"; reason: string; onRefresh: () => Promise<void> }
+  | {
+      status: "success";
+      slices: CostBreakdownSliceView[];
+      total: number;
       onRefresh: () => Promise<void>;
     };

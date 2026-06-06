@@ -134,7 +134,11 @@ function DailyCostBars({ points }: { points: DailyCostPointView[] }) {
 
   return (
     <Box height={`${CHART_HEIGHT.toString()}px`}>
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        initialDimension={{ width: 0, height: CHART_HEIGHT }}
+      >
         <BarChart
           data={points}
           onClick={handleClick}
