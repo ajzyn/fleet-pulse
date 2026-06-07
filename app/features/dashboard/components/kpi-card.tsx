@@ -1,9 +1,10 @@
 import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
-import { Button, Card, Flex, Heading, Skeleton, Text } from "@radix-ui/themes";
+import { Box, Button, Card, Flex, Heading, Skeleton, Text } from "@radix-ui/themes";
 import type { MouseEvent } from "react";
 import { Link } from "react-router";
 import type { KPICardState } from "../types";
 import { DeltaBadge } from "./delta-badge";
+import { Sparkline } from "./sparkline";
 
 interface KPICardProps {
   title: string;
@@ -94,12 +95,17 @@ function KpiCardContent({ state }: { state: KPICardState }) {
       {state.delta || state.sparkline ? (
         <Flex
           justify={state.delta && state.sparkline ? "between" : "end"}
-          align="end"
+          align="center"
           gap="2"
           {...(state.sparkline ? { height: SPARKLINE_SLOT_HEIGHT } : {})}
           mt="auto"
         >
           {state.delta ? <DeltaBadge {...state.delta} /> : null}
+          {state.sparkline ? (
+            <Box flexGrow="1" maxWidth="120px" height="100%">
+              <Sparkline data={state.sparkline} />
+            </Box>
+          ) : null}
         </Flex>
       ) : null}
     </Flex>

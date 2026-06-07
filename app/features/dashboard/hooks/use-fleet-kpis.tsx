@@ -57,6 +57,7 @@ export const useFleetKPIs = (kpisState: KPIsState): KpiCardConfig[] => {
           unit: "aut",
           goodDirection: "up",
         },
+        sparkline: fleetAvailability.sparkline,
       },
     },
     {
@@ -71,6 +72,7 @@ export const useFleetKPIs = (kpisState: KPIsState): KpiCardConfig[] => {
           format: "percent",
           goodDirection: "up",
         },
+        sparkline: utilization.sparkline,
       },
     },
     {
@@ -85,6 +87,7 @@ export const useFleetKPIs = (kpisState: KPIsState): KpiCardConfig[] => {
           format: "percent",
           goodDirection: "down",
         },
+        sparkline: costPerKm.sparkline,
       },
     },
     {
@@ -100,6 +103,7 @@ export const useFleetKPIs = (kpisState: KPIsState): KpiCardConfig[] => {
           format: "percent",
           goodDirection: "down",
         },
+        sparkline: monthlySpend.sparkline,
       },
     },
   ];
