@@ -21,6 +21,7 @@ const FUEL_COLOR = "var(--orange-9)";
 const MAINTENANCE_COLOR = "var(--blue-9)";
 const UTILIZATION_COLOR = "var(--grass-9)";
 const UTILIZATION_TEXT_COLOR = "var(--grass-11)";
+const COST_TEXT_COLOR = "var(--orange-11)";
 
 const compactNumberFormatter = new Intl.NumberFormat("en-US", {
   notation: "compact",
@@ -133,11 +134,12 @@ function MonthlyTrendBody({ points }: { points: MonthlyTrendPointView[] }) {
               axisLine={{ stroke: "var(--gray-a5)" }}
               interval="preserveStartEnd"
               minTickGap={40}
+              padding={{ left: 12, right: 12 }}
             />
             <YAxis
               yAxisId="cost"
               tickFormatter={(v: number) => compactNumberFormatter.format(v)}
-              tick={{ fill: "var(--gray-11)", fontSize: 11 }}
+              tick={{ fill: COST_TEXT_COLOR, fontSize: 11 }}
               tickLine={false}
               axisLine={{ stroke: "var(--gray-a5)" }}
               width={34}
@@ -188,8 +190,15 @@ function MonthlyTrendBody({ points }: { points: MonthlyTrendPointView[] }) {
           </ComposedChart>
         </ResponsiveContainer>
       </Box>
-      <Flex wrap="wrap" gapX="2" gapY="1" mt="2" align="center">
-        <Text size="1" color="gray">
+      <Flex
+        wrap="wrap"
+        gapX="2"
+        gapY="1"
+        mt="2"
+        align="center"
+        justify={{ initial: "start", sm: "end" }}
+      >
+        <Text size="1" style={{ color: COST_TEXT_COLOR }}>
           Lewa oś: koszty (zł)
         </Text>
         <Text size="1" color="gray" aria-hidden>
