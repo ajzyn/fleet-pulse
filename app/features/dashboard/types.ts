@@ -1,18 +1,14 @@
+import type { AsyncViewState } from "~/components/feedback/async-view";
 import type { DeltaBadgeProps } from "./components/delta-badge";
 import type { AttentionStatus, ChipKind } from "./server/attention/types";
 import type { CostBreakdownCategory } from "./server/trends/types";
 
-export type KPICardState =
-  | { status: "loading" }
-  | { status: "error"; message: string; onRetry: () => Promise<void> }
-  | { status: "empty"; reason: string }
-  | {
-      status: "success";
-      value: string;
-      subtitle?: string;
-      delta?: DeltaBadgeProps;
-      sparkline?: number[];
-    };
+export type KPICardState = AsyncViewState<{
+  value: string;
+  subtitle?: string;
+  delta?: DeltaBadgeProps;
+  sparkline?: number[];
+}>;
 
 export interface KpiCardConfig {
   key: string;
@@ -40,16 +36,11 @@ export interface AttentionItemView {
   href: string;
 }
 
-export type AttentionListState =
-  | { status: "loading" }
-  | { status: "error"; message: string; onRetry: () => Promise<void> }
-  | { status: "empty"; reason: string }
-  | {
-      status: "success";
-      items: AttentionItemView[];
-      totalCount: number;
-      hasOverflow: boolean;
-    };
+export type AttentionListState = AsyncViewState<{
+  items: AttentionItemView[];
+  totalCount: number;
+  hasOverflow: boolean;
+}>;
 
 export interface DailyCostPointView {
   date: string;
@@ -58,14 +49,9 @@ export interface DailyCostPointView {
   maintenance: number;
 }
 
-export type DailyCostChartState =
-  | { status: "loading" }
-  | { status: "error"; message: string; onRetry: () => Promise<void> }
-  | { status: "empty"; reason: string }
-  | {
-      status: "success";
-      points: DailyCostPointView[];
-    };
+export type DailyCostChartState = AsyncViewState<{
+  points: DailyCostPointView[];
+}>;
 
 export interface CostBreakdownSliceView {
   category: CostBreakdownCategory;
@@ -75,15 +61,10 @@ export interface CostBreakdownSliceView {
   percentage: number;
 }
 
-export type CostBreakdownDonutState =
-  | { status: "loading" }
-  | { status: "error"; message: string; onRetry: () => Promise<void> }
-  | { status: "empty"; reason: string }
-  | {
-      status: "success";
-      slices: CostBreakdownSliceView[];
-      total: number;
-    };
+export type CostBreakdownDonutState = AsyncViewState<{
+  slices: CostBreakdownSliceView[];
+  total: number;
+}>;
 
 export interface MonthlyTrendPointView {
   month: string;
@@ -93,11 +74,6 @@ export interface MonthlyTrendPointView {
   utilization: number;
 }
 
-export type MonthlyTrendChartState =
-  | { status: "loading" }
-  | { status: "error"; message: string; onRetry: () => Promise<void> }
-  | { status: "empty"; reason: string }
-  | {
-      status: "success";
-      points: MonthlyTrendPointView[];
-    };
+export type MonthlyTrendChartState = AsyncViewState<{
+  points: MonthlyTrendPointView[];
+}>;

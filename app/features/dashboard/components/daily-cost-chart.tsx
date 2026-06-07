@@ -1,5 +1,4 @@
-import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
-import { Box, Button, Card, Flex, Heading, Skeleton, Text, VisuallyHidden } from "@radix-ui/themes";
+import { Box, Card, Flex, Heading, Skeleton, Text, VisuallyHidden } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 import {
   Bar,
@@ -13,24 +12,15 @@ import {
   type MouseHandlerDataParam,
   type TooltipContentProps,
 } from "recharts";
+import { AsyncView } from "~/components/feedback/async-view";
+import { plnCompactFormatter, plnFormatter } from "~/lib/number-formatter";
+import { isTooltipVisible, valueByDataKey } from "~/lib/recharts/tooltip";
 import type { DailyCostChartState, DailyCostPointView } from "../types";
 
 const CHART_HEIGHT = 280;
+const CHART_HEIGHT_CLASS = "h-[280px]";
 const FUEL_COLOR = "var(--orange-9)";
 const MAINTENANCE_COLOR = "var(--blue-9)";
-
-const compactPlnFormatter = new Intl.NumberFormat("pl-PL", {
-  style: "currency",
-  currency: "PLN",
-  notation: "compact",
-  maximumFractionDigits: 0,
-});
-
-const fullPlnFormatter = new Intl.NumberFormat("pl-PL", {
-  style: "currency",
-  currency: "PLN",
-  maximumFractionDigits: 0,
-});
 
 const SERIES_LABEL: Record<string, string> = {
   fuel: "Paliwo",
@@ -44,66 +34,20 @@ export function DailyCostChart({ state }: { state: DailyCostChartState }) {
         <Heading as="h2" size="4" mb="4">
           Dzienne koszty (30 dni)
         </Heading>
-        <DailyCostChartContent state={state} />
+        <AsyncView
+          state={state}
+          className={CHART_HEIGHT_CLASS}
+          loading={
+            <Box className={CHART_HEIGHT_CLASS}>
+              <Skeleton width="100%" height="100%" role="status" aria-label="Wczytuję wykres" />
+            </Box>
+          }
+        >
+          {(data) => <DailyCostBars points={data.points} />}
+        </AsyncView>
       </section>
     </Card>
   );
-}
-
-function DailyCostChartContent({ state }: { state: DailyCostChartState }) {
-  if (state.status === "loading") {
-    return (
-      <Skeleton
-        width="100%"
-        height={`${CHART_HEIGHT.toString()}px`}
-        role="status"
-        aria-label="Wczytuję wykres"
-      />
-    );
-  }
-
-  if (state.status === "error") {
-    return (
-      <Flex
-        direction="column"
-        gap="3"
-        align="start"
-        minHeight={`${CHART_HEIGHT.toString()}px`}
-        justify="center"
-      >
-        <Flex gap="2" align="center">
-          <ExclamationTriangleIcon color="red" />
-          <Text size="2" color="red">
-            {state.message}
-          </Text>
-        </Flex>
-        <Button size="2" variant="soft" onClick={() => void state.onRetry()}>
-          Spróbuj ponownie
-        </Button>
-      </Flex>
-    );
-  }
-
-  if (state.status === "empty") {
-    return (
-      <Flex
-        direction="column"
-        gap="2"
-        align="start"
-        minHeight={`${CHART_HEIGHT.toString()}px`}
-        justify="center"
-      >
-        <Flex gap="2" align="center">
-          <InfoCircledIcon color="gray" />
-          <Text size="2" color="gray">
-            {state.reason}
-          </Text>
-        </Flex>
-      </Flex>
-    );
-  }
-
-  return <DailyCostBars points={state.points} />;
 }
 
 function DailyCostBars({ points }: { points: DailyCostPointView[] }) {
@@ -140,7 +84,7 @@ function DailyCostBars({ points }: { points: DailyCostPointView[] }) {
               minTickGap={16}
             />
             <YAxis
-              tickFormatter={(v: number) => compactPlnFormatter.format(v)}
+              tickFormatter={(v: number) => plnCompactFormatter.format(v)}
               tick={{ fill: "var(--gray-11)", fontSize: 11 }}
               tickLine={false}
               axisLine={{ stroke: "var(--gray-a5)" }}
@@ -177,9 +121,9 @@ function DailyCostBars({ points }: { points: DailyCostPointView[] }) {
             {points.map((p) => (
               <tr key={p.date}>
                 <th scope="row">{p.label}</th>
-                <td>{fullPlnFormatter.format(p.fuel)}</td>
-                <td>{fullPlnFormatter.format(p.maintenance)}</td>
-                <td>{fullPlnFormatter.format(p.fuel + p.maintenance)}</td>
+                <td>{plnFormatter.format(p.fuel)}</td>
+                <td>{plnFormatter.format(p.maintenance)}</td>
+                <td>{plnFormatter.format(p.fuel + p.maintenance)}</td>
               </tr>
             ))}
           </tbody>
@@ -189,14 +133,13 @@ function DailyCostBars({ points }: { points: DailyCostPointView[] }) {
   );
 }
 
-function DailyCostTooltip({ active, payload, label }: TooltipContentProps) {
-  if (!active || payload.length === 0) return null;
+function DailyCostTooltip(props: TooltipContentProps) {
+  if (!isTooltipVisible(props)) return null;
 
-  const fuelEntry = payload.find((p) => p.dataKey === "fuel");
-  const maintenanceEntry = payload.find((p) => p.dataKey === "maintenance");
-  const fuel = typeof fuelEntry?.value === "number" ? fuelEntry.value : 0;
-  const maintenance = typeof maintenanceEntry?.value === "number" ? maintenanceEntry.value : 0;
+  const fuel = valueByDataKey(props.payload, "fuel");
+  const maintenance = valueByDataKey(props.payload, "maintenance");
   const total = fuel + maintenance;
+  const { label } = props;
 
   return (
     <Card size="1" className="shadow-lg">
@@ -207,7 +150,7 @@ function DailyCostTooltip({ active, payload, label }: TooltipContentProps) {
         <TooltipRow color={FUEL_COLOR} label="Paliwo" value={fuel} />
         <TooltipRow color={MAINTENANCE_COLOR} label="Serwis" value={maintenance} />
         <Text size="1" color="gray" mt="1">
-          Razem: <Text weight="bold">{fullPlnFormatter.format(total)}</Text>
+          Razem: <Text weight="bold">{plnFormatter.format(total)}</Text>
         </Text>
       </Flex>
     </Card>
@@ -224,7 +167,7 @@ function TooltipRow({ color, label, value }: { color: string; label: string; val
         </Text>
       </Flex>
       <Text size="1" weight="medium">
-        {fullPlnFormatter.format(value)}
+        {plnFormatter.format(value)}
       </Text>
     </Flex>
   );

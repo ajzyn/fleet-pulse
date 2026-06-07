@@ -1,16 +1,6 @@
-import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
-import {
-  Badge,
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  Skeleton,
-  Text,
-  type BadgeProps,
-} from "@radix-ui/themes";
+import { Badge, Box, Card, Flex, Heading, Skeleton, Text, type BadgeProps } from "@radix-ui/themes";
 import { Link } from "react-router";
+import { AsyncView } from "~/components/feedback/async-view";
 import { dateFormatter } from "~/lib/date-formatter";
 import type { AttentionItemView, AttentionListState, ChipTone } from "../types";
 
@@ -55,62 +45,51 @@ export function AttentionList({ state, generatedAt }: AttentionListProps) {
         <Heading as="h2" size="4" mb="4">
           Wymaga uwagi
         </Heading>
-        <AttentionListContent state={state} generatedAt={generatedAt} />
+        <AsyncView
+          state={state}
+          className="min-h-[72px]"
+          loading={
+            <Flex direction="column" gap="2" role="status" aria-label="Wczytuję listę pojazdów">
+              {Array.from({ length: SKELETON_ROWS }, (_, index) => (
+                <Skeleton key={index} width="100%" height={ROW_MIN_HEIGHT} />
+              ))}
+            </Flex>
+          }
+          emptyExtra={
+            <Text size="1" color="gray">
+              Sprawdzono:
+              <time dateTime={generatedAt}>{dateFormatter.format(new Date(generatedAt))}</time>
+            </Text>
+          }
+        >
+          {(data) => (
+            <AttentionItems
+              items={data.items}
+              totalCount={data.totalCount}
+              hasOverflow={data.hasOverflow}
+            />
+          )}
+        </AsyncView>
       </section>
     </Card>
   );
 }
 
-function AttentionListContent({ state, generatedAt }: AttentionListProps) {
-  if (state.status === "loading") {
-    return (
-      <Flex direction="column" gap="2" role="status" aria-label="Wczytuję listę pojazdów">
-        {Array.from({ length: SKELETON_ROWS }, (_, index) => (
-          <Skeleton key={index} width="100%" height={ROW_MIN_HEIGHT} />
-        ))}
-      </Flex>
-    );
-  }
-
-  if (state.status === "error") {
-    return (
-      <Flex direction="column" gap="3" align="start" minHeight={ROW_MIN_HEIGHT} justify="center">
-        <Flex gap="2" align="center">
-          <ExclamationTriangleIcon color="red" />
-          <Text size="2" color="red">
-            {state.message}
-          </Text>
-        </Flex>
-        <Button size="2" variant="soft" onClick={() => void state.onRetry()}>
-          Spróbuj ponownie
-        </Button>
-      </Flex>
-    );
-  }
-
-  if (state.status === "empty") {
-    return (
-      <Flex direction="column" gap="2" align="start" minHeight={ROW_MIN_HEIGHT} justify="center">
-        <Flex gap="2" align="center">
-          <InfoCircledIcon color="gray" />
-          <Text size="2" color="gray">
-            {state.reason}
-          </Text>
-        </Flex>
-        <Text size="1" color="gray">
-          Sprawdzono:
-          <time dateTime={generatedAt}>{dateFormatter.format(new Date(generatedAt))}</time>
-        </Text>
-      </Flex>
-    );
-  }
-
-  const showAllLink = state.hasOverflow || state.items.length > MOBILE_VISIBLE_ROWS;
+function AttentionItems({
+  items,
+  totalCount,
+  hasOverflow,
+}: {
+  items: AttentionItemView[];
+  totalCount: number;
+  hasOverflow: boolean;
+}) {
+  const showAllLink = hasOverflow || items.length > MOBILE_VISIBLE_ROWS;
 
   return (
     <Box>
       <ul className="list-none p-0 m-0">
-        {state.items.map((item, index) => (
+        {items.map((item, index) => (
           <AttentionRow
             key={item.vehicleId}
             item={item}
@@ -127,13 +106,13 @@ function AttentionListContent({ state, generatedAt }: AttentionListProps) {
         <Box
           pt="3"
           mt="2"
-          className={`border-t border-[var(--gray-a4)] ${state.hasOverflow ? "" : "md:hidden"}`}
+          className={`border-t border-[var(--gray-a4)] ${hasOverflow ? "" : "md:hidden"}`}
         >
           <Link
             to="/vehicles?needs_attention=true"
             className="text-[var(--accent-11)] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-9)] rounded-2"
           >
-            <Text size="2">Zobacz wszystkie ({state.totalCount})</Text>
+            <Text size="2">Zobacz wszystkie ({totalCount})</Text>
           </Link>
         </Box>
       ) : null}

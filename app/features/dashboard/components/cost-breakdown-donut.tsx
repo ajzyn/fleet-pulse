@@ -1,5 +1,4 @@
-import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
-import { Box, Button, Card, Flex, Heading, Skeleton, Text, VisuallyHidden } from "@radix-ui/themes";
+import { Box, Card, Flex, Heading, Skeleton, Text, VisuallyHidden } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 import {
   Label,
@@ -10,22 +9,12 @@ import {
   Tooltip,
   type TooltipContentProps,
 } from "recharts";
+import { AsyncView } from "~/components/feedback/async-view";
+import { plnCompactFormatter, plnFormatter } from "~/lib/number-formatter";
+import { isTooltipVisible, toNumber } from "~/lib/recharts/tooltip";
 import type { CostBreakdownDonutState, CostBreakdownSliceView } from "../types";
 
 const CHART_HEIGHT_CLASS = "h-[180px] sm:h-[280px]";
-
-const compactPlnFormatter = new Intl.NumberFormat("pl-PL", {
-  style: "currency",
-  currency: "PLN",
-  notation: "compact",
-  maximumFractionDigits: 0,
-});
-
-const fullPlnFormatter = new Intl.NumberFormat("pl-PL", {
-  style: "currency",
-  currency: "PLN",
-  maximumFractionDigits: 0,
-});
 
 const percentFormatter = new Intl.NumberFormat("pl-PL", {
   style: "percent",
@@ -39,55 +28,20 @@ export function CostBreakdownDonut({ state }: { state: CostBreakdownDonutState }
         <Heading as="h2" size="4" mb="4">
           Struktura kosztów w tym miesiącu
         </Heading>
-        <CostBreakdownContent state={state} />
+        <AsyncView
+          state={state}
+          className={CHART_HEIGHT_CLASS}
+          loading={
+            <Box className={CHART_HEIGHT_CLASS}>
+              <Skeleton width="100%" height="100%" role="status" aria-label="Wczytuję wykres" />
+            </Box>
+          }
+        >
+          {(data) => <CostBreakdownBody slices={data.slices} total={data.total} />}
+        </AsyncView>
       </section>
     </Card>
   );
-}
-
-function CostBreakdownContent({ state }: { state: CostBreakdownDonutState }) {
-  if (state.status === "loading") {
-    return (
-      <Box className={CHART_HEIGHT_CLASS}>
-        <Skeleton width="100%" height="100%" role="status" aria-label="Wczytuję wykres" />
-      </Box>
-    );
-  }
-
-  if (state.status === "error") {
-    return (
-      <Box className={CHART_HEIGHT_CLASS}>
-        <Flex direction="column" gap="3" align="start" justify="center" height="100%">
-          <Flex gap="2" align="center">
-            <ExclamationTriangleIcon color="red" />
-            <Text size="2" color="red">
-              {state.message}
-            </Text>
-          </Flex>
-          <Button size="2" variant="soft" onClick={() => void state.onRetry()}>
-            Spróbuj ponownie
-          </Button>
-        </Flex>
-      </Box>
-    );
-  }
-
-  if (state.status === "empty") {
-    return (
-      <Box className={CHART_HEIGHT_CLASS}>
-        <Flex direction="column" gap="2" align="start" justify="center" height="100%">
-          <Flex gap="2" align="center">
-            <InfoCircledIcon color="gray" />
-            <Text size="2" color="gray">
-              {state.reason}
-            </Text>
-          </Flex>
-        </Flex>
-      </Box>
-    );
-  }
-
-  return <CostBreakdownBody slices={state.slices} total={state.total} />;
 }
 
 function CostBreakdownBody({ slices, total }: { slices: CostBreakdownSliceView[]; total: number }) {
@@ -150,13 +104,13 @@ function CostBreakdownBody({ slices, total }: { slices: CostBreakdownSliceView[]
             {slices.map((slice) => (
               <tr key={slice.category}>
                 <th scope="row">{slice.label}</th>
-                <td>{fullPlnFormatter.format(slice.amount)}</td>
+                <td>{plnFormatter.format(slice.amount)}</td>
                 <td>{percentFormatter.format(slice.percentage / 100)}</td>
               </tr>
             ))}
             <tr>
               <th scope="row">Razem</th>
-              <td>{fullPlnFormatter.format(total)}</td>
+              <td>{plnFormatter.format(total)}</td>
               <td>{percentFormatter.format(1)}</td>
             </tr>
           </tbody>
@@ -166,12 +120,12 @@ function CostBreakdownBody({ slices, total }: { slices: CostBreakdownSliceView[]
   );
 }
 
-function CostBreakdownTooltip({ active, payload }: TooltipContentProps) {
-  if (!active || payload.length === 0) return null;
-  const entry = payload[0];
+function CostBreakdownTooltip(props: TooltipContentProps) {
+  if (!isTooltipVisible(props)) return null;
+  const entry = props.payload[0];
   if (!entry) return null;
 
-  const amount = typeof entry.value === "number" ? entry.value : 0;
+  const amount = toNumber(entry.value);
   const label = typeof entry.name === "string" ? entry.name : "";
   const color = entry.color ?? "var(--gray-9)";
   const share = readSlicePercentage(entry.payload);
@@ -190,7 +144,7 @@ function CostBreakdownTooltip({ active, payload }: TooltipContentProps) {
             Kwota
           </Text>
           <Text size="1" weight="medium">
-            {fullPlnFormatter.format(amount)}
+            {plnFormatter.format(amount)}
           </Text>
         </Flex>
         <Flex justify="between" gap="3">
@@ -236,7 +190,7 @@ function CenterLabel({ viewBox, value }: { viewBox?: unknown; value?: unknown })
         fontSize={22}
         fontWeight={600}
       >
-        {compactPlnFormatter.format(total)}
+        {plnCompactFormatter.format(total)}
       </text>
       <text x={cx} y={cy + 16} textAnchor="middle" fill="var(--gray-10)" fontSize={11}>
         Razem w tym miesiącu

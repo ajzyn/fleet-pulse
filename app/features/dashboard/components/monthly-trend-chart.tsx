@@ -1,5 +1,4 @@
-import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
-import { Box, Button, Card, Flex, Heading, Skeleton, Text, VisuallyHidden } from "@radix-ui/themes";
+import { Box, Card, Flex, Heading, Skeleton, Text, VisuallyHidden } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 import {
   Area,
@@ -14,6 +13,9 @@ import {
   type MouseHandlerDataParam,
   type TooltipContentProps,
 } from "recharts";
+import { AsyncView } from "~/components/feedback/async-view";
+import { plnFormatter } from "~/lib/number-formatter";
+import { isTooltipVisible, valueByDataKey } from "~/lib/recharts/tooltip";
 import type { MonthlyTrendChartState, MonthlyTrendPointView } from "../types";
 
 const CHART_HEIGHT_CLASS = "h-[260px] sm:h-[320px]";
@@ -26,12 +28,6 @@ const COST_TEXT_COLOR = "var(--orange-11)";
 const compactNumberFormatter = new Intl.NumberFormat("en-US", {
   notation: "compact",
   maximumFractionDigits: 1,
-});
-
-const fullPlnFormatter = new Intl.NumberFormat("pl-PL", {
-  style: "currency",
-  currency: "PLN",
-  maximumFractionDigits: 0,
 });
 
 const kmPerDayFormatter = new Intl.NumberFormat("pl-PL", {
@@ -51,55 +47,20 @@ export function MonthlyTrendChart({ state }: { state: MonthlyTrendChartState }) 
         <Heading as="h2" size="4" mb="4">
           Trend miesięczny (12 miesięcy)
         </Heading>
-        <MonthlyTrendContent state={state} />
+        <AsyncView
+          state={state}
+          className={CHART_HEIGHT_CLASS}
+          loading={
+            <Box className={CHART_HEIGHT_CLASS}>
+              <Skeleton width="100%" height="100%" role="status" aria-label="Wczytuję wykres" />
+            </Box>
+          }
+        >
+          {(data) => <MonthlyTrendBody points={data.points} />}
+        </AsyncView>
       </section>
     </Card>
   );
-}
-
-function MonthlyTrendContent({ state }: { state: MonthlyTrendChartState }) {
-  if (state.status === "loading") {
-    return (
-      <Box className={CHART_HEIGHT_CLASS}>
-        <Skeleton width="100%" height="100%" role="status" aria-label="Wczytuję wykres" />
-      </Box>
-    );
-  }
-
-  if (state.status === "error") {
-    return (
-      <Box className={CHART_HEIGHT_CLASS}>
-        <Flex direction="column" gap="3" align="start" justify="center" height="100%">
-          <Flex gap="2" align="center">
-            <ExclamationTriangleIcon color="red" />
-            <Text size="2" color="red">
-              {state.message}
-            </Text>
-          </Flex>
-          <Button size="2" variant="soft" onClick={() => void state.onRetry()}>
-            Spróbuj ponownie
-          </Button>
-        </Flex>
-      </Box>
-    );
-  }
-
-  if (state.status === "empty") {
-    return (
-      <Box className={CHART_HEIGHT_CLASS}>
-        <Flex direction="column" gap="2" align="start" justify="center" height="100%">
-          <Flex gap="2" align="center">
-            <InfoCircledIcon color="gray" />
-            <Text size="2" color="gray">
-              {state.reason}
-            </Text>
-          </Flex>
-        </Flex>
-      </Box>
-    );
-  }
-
-  return <MonthlyTrendBody points={state.points} />;
 }
 
 function MonthlyTrendBody({ points }: { points: MonthlyTrendPointView[] }) {
@@ -227,9 +188,9 @@ function MonthlyTrendBody({ points }: { points: MonthlyTrendPointView[] }) {
             {points.map((p) => (
               <tr key={p.month}>
                 <th scope="row">{p.label}</th>
-                <td>{fullPlnFormatter.format(p.fuel)}</td>
-                <td>{fullPlnFormatter.format(p.maintenance)}</td>
-                <td>{fullPlnFormatter.format(p.fuel + p.maintenance)}</td>
+                <td>{plnFormatter.format(p.fuel)}</td>
+                <td>{plnFormatter.format(p.maintenance)}</td>
+                <td>{plnFormatter.format(p.fuel + p.maintenance)}</td>
                 <td>{kmPerDayFormatter.format(p.utilization)}</td>
               </tr>
             ))}
@@ -240,16 +201,14 @@ function MonthlyTrendBody({ points }: { points: MonthlyTrendPointView[] }) {
   );
 }
 
-function MonthlyTrendTooltip({ active, payload, label }: TooltipContentProps) {
-  if (!active || payload.length === 0) return null;
+function MonthlyTrendTooltip(props: TooltipContentProps) {
+  if (!isTooltipVisible(props)) return null;
 
-  const fuelEntry = payload.find((p) => p.dataKey === "fuel");
-  const maintenanceEntry = payload.find((p) => p.dataKey === "maintenance");
-  const utilizationEntry = payload.find((p) => p.dataKey === "utilization");
-  const fuel = typeof fuelEntry?.value === "number" ? fuelEntry.value : 0;
-  const maintenance = typeof maintenanceEntry?.value === "number" ? maintenanceEntry.value : 0;
-  const utilization = typeof utilizationEntry?.value === "number" ? utilizationEntry.value : 0;
+  const fuel = valueByDataKey(props.payload, "fuel");
+  const maintenance = valueByDataKey(props.payload, "maintenance");
+  const utilization = valueByDataKey(props.payload, "utilization");
   const total = fuel + maintenance;
+  const { label } = props;
 
   return (
     <Card size="1" className="shadow-lg">
@@ -257,14 +216,14 @@ function MonthlyTrendTooltip({ active, payload, label }: TooltipContentProps) {
         <Text size="2" weight="bold">
           {label}
         </Text>
-        <CostRow color={FUEL_COLOR} label="Paliwo" value={fullPlnFormatter.format(fuel)} />
+        <CostRow color={FUEL_COLOR} label="Paliwo" value={plnFormatter.format(fuel)} />
         <CostRow
           color={MAINTENANCE_COLOR}
           label="Serwis"
-          value={fullPlnFormatter.format(maintenance)}
+          value={plnFormatter.format(maintenance)}
         />
         <Text size="1" color="gray">
-          Razem: <Text weight="bold">{fullPlnFormatter.format(total)}</Text>
+          Razem: <Text weight="bold">{plnFormatter.format(total)}</Text>
         </Text>
         <CostRow
           color={UTILIZATION_COLOR}
