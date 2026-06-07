@@ -22,7 +22,6 @@ export const useMonthlyTrend = (trendsState: TrendsState): MonthlyTrendChartStat
     return {
       status: "empty",
       reason: "Brak danych z ostatnich 12 miesięcy",
-      onRefresh: revalidate,
     };
   }
 
@@ -37,6 +36,5 @@ export const useMonthlyTrend = (trendsState: TrendsState): MonthlyTrendChartStat
   return {
     status: "success",
     points: pointsView,
-    onRefresh: revalidate,
   };
 };

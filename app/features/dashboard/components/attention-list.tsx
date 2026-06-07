@@ -1,4 +1,4 @@
-import { ExclamationTriangleIcon, InfoCircledIcon, ReloadIcon } from "@radix-ui/react-icons";
+import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import {
   Badge,
   Box,
@@ -6,7 +6,6 @@ import {
   Card,
   Flex,
   Heading,
-  IconButton,
   Skeleton,
   Text,
   type BadgeProps,
@@ -50,27 +49,12 @@ interface AttentionListProps {
 }
 
 export function AttentionList({ state, generatedAt }: AttentionListProps) {
-  const refreshHandler =
-    state.status === "success" || state.status === "empty" ? state.onRefresh : null;
-
   return (
     <Card size="3" asChild>
       <section aria-label="Pojazdy wymagające uwagi">
-        <Flex justify="between" align="center" mb="4" gap="3">
-          <Heading as="h2" size="4">
-            Wymaga uwagi
-          </Heading>
-          {refreshHandler ? (
-            <IconButton
-              variant="ghost"
-              color="gray"
-              onClick={() => void refreshHandler()}
-              aria-label="Odśwież listę"
-            >
-              <ReloadIcon />
-            </IconButton>
-          ) : null}
-        </Flex>
+        <Heading as="h2" size="4" mb="4">
+          Wymaga uwagi
+        </Heading>
         <AttentionListContent state={state} generatedAt={generatedAt} />
       </section>
     </Card>

@@ -20,7 +20,6 @@ export const useDailyCost = (trendsState: TrendsState): DailyCostChartState => {
     return {
       status: "empty",
       reason: "Brak kosztów w ostatnich 30 dniach",
-      onRefresh: revalidate,
     };
   }
 
@@ -34,6 +33,5 @@ export const useDailyCost = (trendsState: TrendsState): DailyCostChartState => {
   return {
     status: "success",
     points: pointsView,
-    onRefresh: revalidate,
   };
 };

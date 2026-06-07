@@ -1,15 +1,5 @@
-import { ExclamationTriangleIcon, InfoCircledIcon, ReloadIcon } from "@radix-ui/react-icons";
-import {
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  IconButton,
-  Skeleton,
-  Text,
-  VisuallyHidden,
-} from "@radix-ui/themes";
+import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import { Box, Button, Card, Flex, Heading, Skeleton, Text, VisuallyHidden } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 import {
   Bar,
@@ -48,27 +38,12 @@ const SERIES_LABEL: Record<string, string> = {
 };
 
 export function DailyCostChart({ state }: { state: DailyCostChartState }) {
-  const refreshHandler =
-    state.status === "success" || state.status === "empty" ? state.onRefresh : null;
-
   return (
     <Card size="3" asChild>
       <section aria-label="Dzienne koszty w ostatnich 30 dniach">
-        <Flex justify="between" align="center" mb="4" gap="3">
-          <Heading as="h2" size="4">
-            Dzienne koszty (30 dni)
-          </Heading>
-          {refreshHandler ? (
-            <IconButton
-              variant="ghost"
-              color="gray"
-              onClick={() => void refreshHandler()}
-              aria-label="Odśwież wykres"
-            >
-              <ReloadIcon />
-            </IconButton>
-          ) : null}
-        </Flex>
+        <Heading as="h2" size="4" mb="4">
+          Dzienne koszty (30 dni)
+        </Heading>
         <DailyCostChartContent state={state} />
       </section>
     </Card>

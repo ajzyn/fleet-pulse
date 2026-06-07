@@ -1,15 +1,5 @@
-import { ExclamationTriangleIcon, InfoCircledIcon, ReloadIcon } from "@radix-ui/react-icons";
-import {
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  IconButton,
-  Skeleton,
-  Text,
-  VisuallyHidden,
-} from "@radix-ui/themes";
+import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import { Box, Button, Card, Flex, Heading, Skeleton, Text, VisuallyHidden } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 import {
   Label,
@@ -43,27 +33,12 @@ const percentFormatter = new Intl.NumberFormat("pl-PL", {
 });
 
 export function CostBreakdownDonut({ state }: { state: CostBreakdownDonutState }) {
-  const refreshHandler =
-    state.status === "success" || state.status === "empty" ? state.onRefresh : null;
-
   return (
     <Card size="3" asChild>
       <section aria-label="Struktura kosztów w bieżącym miesiącu">
-        <Flex justify="between" align="center" mb="4" gap="3">
-          <Heading as="h2" size="4">
-            Struktura kosztów w tym miesiącu
-          </Heading>
-          {refreshHandler ? (
-            <IconButton
-              variant="ghost"
-              color="gray"
-              onClick={() => void refreshHandler()}
-              aria-label="Odśwież wykres"
-            >
-              <ReloadIcon />
-            </IconButton>
-          ) : null}
-        </Flex>
+        <Heading as="h2" size="4" mb="4">
+          Struktura kosztów w tym miesiącu
+        </Heading>
         <CostBreakdownContent state={state} />
       </section>
     </Card>

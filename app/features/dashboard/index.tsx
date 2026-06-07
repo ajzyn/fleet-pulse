@@ -1,4 +1,5 @@
 import { Page } from "~/components/page";
+import { useRevalidateOnInterval } from "~/hooks/use-revalidate-on-interval";
 import { dateFormatter } from "~/lib/date-formatter";
 import type { Route } from "../../routes/dashboard/+types/route";
 import { AttentionList } from "./components/attention-list";
@@ -20,6 +21,8 @@ export function Dashboard({ loaderData }: DashboardProps) {
   const dailyCost = useDailyCost(loaderData.trends);
   const costBreakdown = useCostBreakdown(loaderData.trends);
   const monthlyTrend = useMonthlyTrend(loaderData.trends);
+
+  useRevalidateOnInterval(60_000);
 
   return (
     <Page.Root>

@@ -43,13 +43,12 @@ export interface AttentionItemView {
 export type AttentionListState =
   | { status: "loading" }
   | { status: "error"; message: string; onRetry: () => Promise<void> }
-  | { status: "empty"; reason: string; onRefresh: () => Promise<void> }
+  | { status: "empty"; reason: string }
   | {
       status: "success";
       items: AttentionItemView[];
       totalCount: number;
       hasOverflow: boolean;
-      onRefresh: () => Promise<void>;
     };
 
 export interface DailyCostPointView {
@@ -62,11 +61,10 @@ export interface DailyCostPointView {
 export type DailyCostChartState =
   | { status: "loading" }
   | { status: "error"; message: string; onRetry: () => Promise<void> }
-  | { status: "empty"; reason: string; onRefresh: () => Promise<void> }
+  | { status: "empty"; reason: string }
   | {
       status: "success";
       points: DailyCostPointView[];
-      onRefresh: () => Promise<void>;
     };
 
 export interface CostBreakdownSliceView {
@@ -80,12 +78,11 @@ export interface CostBreakdownSliceView {
 export type CostBreakdownDonutState =
   | { status: "loading" }
   | { status: "error"; message: string; onRetry: () => Promise<void> }
-  | { status: "empty"; reason: string; onRefresh: () => Promise<void> }
+  | { status: "empty"; reason: string }
   | {
       status: "success";
       slices: CostBreakdownSliceView[];
       total: number;
-      onRefresh: () => Promise<void>;
     };
 
 export interface MonthlyTrendPointView {
@@ -99,9 +96,8 @@ export interface MonthlyTrendPointView {
 export type MonthlyTrendChartState =
   | { status: "loading" }
   | { status: "error"; message: string; onRetry: () => Promise<void> }
-  | { status: "empty"; reason: string; onRefresh: () => Promise<void> }
+  | { status: "empty"; reason: string }
   | {
       status: "success";
       points: MonthlyTrendPointView[];
-      onRefresh: () => Promise<void>;
     };

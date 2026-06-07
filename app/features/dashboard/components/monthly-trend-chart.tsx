@@ -1,15 +1,5 @@
-import { ExclamationTriangleIcon, InfoCircledIcon, ReloadIcon } from "@radix-ui/react-icons";
-import {
-  Box,
-  Button,
-  Card,
-  Flex,
-  Heading,
-  IconButton,
-  Skeleton,
-  Text,
-  VisuallyHidden,
-} from "@radix-ui/themes";
+import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import { Box, Button, Card, Flex, Heading, Skeleton, Text, VisuallyHidden } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 import {
   Area,
@@ -54,27 +44,12 @@ const SERIES_LABEL: Record<string, string> = {
 };
 
 export function MonthlyTrendChart({ state }: { state: MonthlyTrendChartState }) {
-  const refreshHandler =
-    state.status === "success" || state.status === "empty" ? state.onRefresh : null;
-
   return (
     <Card size="3" asChild>
       <section aria-label="Trend kosztów i wykorzystania w ostatnich 12 miesiącach">
-        <Flex justify="between" align="center" mb="4" gap="3">
-          <Heading as="h2" size="4">
-            Trend miesięczny (12 miesięcy)
-          </Heading>
-          {refreshHandler ? (
-            <IconButton
-              variant="ghost"
-              color="gray"
-              onClick={() => void refreshHandler()}
-              aria-label="Odśwież wykres"
-            >
-              <ReloadIcon />
-            </IconButton>
-          ) : null}
-        </Flex>
+        <Heading as="h2" size="4" mb="4">
+          Trend miesięczny (12 miesięcy)
+        </Heading>
         <MonthlyTrendContent state={state} />
       </section>
     </Card>

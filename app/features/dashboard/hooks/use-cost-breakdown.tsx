@@ -25,7 +25,6 @@ export const useCostBreakdown = (trendsState: TrendsState): CostBreakdownDonutSt
     return {
       status: "empty",
       reason: "Brak kosztów w tym miesiącu",
-      onRefresh: revalidate,
     };
   }
 
@@ -43,6 +42,5 @@ export const useCostBreakdown = (trendsState: TrendsState): CostBreakdownDonutSt
     status: "success",
     slices: slicesView,
     total,
-    onRefresh: revalidate,
   };
 };

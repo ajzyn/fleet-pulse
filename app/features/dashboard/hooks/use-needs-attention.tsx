@@ -33,7 +33,6 @@ export const useNeedsAttention = (attentionState: AttentionState): AttentionList
     return {
       status: "empty",
       reason: "Flota stabilna — brak alertów",
-      onRefresh: revalidate,
     };
   }
 
@@ -63,6 +62,5 @@ export const useNeedsAttention = (attentionState: AttentionState): AttentionList
     items: itemViews,
     totalCount,
     hasOverflow: totalCount > itemViews.length,
-    onRefresh: revalidate,
   };
 };
