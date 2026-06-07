@@ -1,5 +1,15 @@
 import { ExclamationTriangleIcon, InfoCircledIcon, ReloadIcon } from "@radix-ui/react-icons";
-import { Box, Button, Card, Flex, Heading, IconButton, Skeleton, Text } from "@radix-ui/themes";
+import {
+  Box,
+  Button,
+  Card,
+  Flex,
+  Heading,
+  IconButton,
+  Skeleton,
+  Text,
+  VisuallyHidden,
+} from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 import {
   Bar,
@@ -133,49 +143,74 @@ function DailyCostBars({ points }: { points: DailyCostPointView[] }) {
   };
 
   return (
-    <Box height={`${CHART_HEIGHT.toString()}px`}>
-      <ResponsiveContainer
-        width="100%"
-        height="100%"
-        initialDimension={{ width: 0, height: CHART_HEIGHT }}
-      >
-        <BarChart
-          data={points}
-          onClick={handleClick}
-          margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+    <>
+      <Box height={`${CHART_HEIGHT.toString()}px`}>
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+          initialDimension={{ width: 0, height: CHART_HEIGHT }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--gray-a4)" vertical={false} />
-          <XAxis
-            dataKey="label"
-            tick={{ fill: "var(--gray-11)", fontSize: 11 }}
-            tickLine={false}
-            axisLine={{ stroke: "var(--gray-a5)" }}
-            interval="preserveStartEnd"
-            minTickGap={16}
-          />
-          <YAxis
-            tickFormatter={(v: number) => compactPlnFormatter.format(v)}
-            tick={{ fill: "var(--gray-11)", fontSize: 11 }}
-            tickLine={false}
-            axisLine={{ stroke: "var(--gray-a5)" }}
-            width={56}
-          />
-          <Tooltip content={DailyCostTooltip} cursor={{ fill: "var(--gray-a3)" }} />
-          <Legend
-            wrapperStyle={{ fontSize: 12, paddingTop: 12 }}
-            formatter={(value: string) => SERIES_LABEL[value] ?? value}
-          />
-          <Bar dataKey="fuel" stackId="cost" fill={FUEL_COLOR} cursor="pointer" />
-          <Bar
-            dataKey="maintenance"
-            stackId="cost"
-            fill={MAINTENANCE_COLOR}
-            cursor="pointer"
-            radius={[4, 4, 0, 0]}
-          />
-        </BarChart>
-      </ResponsiveContainer>
-    </Box>
+          <BarChart
+            data={points}
+            onClick={handleClick}
+            margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--gray-a4)" vertical={false} />
+            <XAxis
+              dataKey="label"
+              tick={{ fill: "var(--gray-11)", fontSize: 11 }}
+              tickLine={false}
+              axisLine={{ stroke: "var(--gray-a5)" }}
+              interval="preserveStartEnd"
+              minTickGap={16}
+            />
+            <YAxis
+              tickFormatter={(v: number) => compactPlnFormatter.format(v)}
+              tick={{ fill: "var(--gray-11)", fontSize: 11 }}
+              tickLine={false}
+              axisLine={{ stroke: "var(--gray-a5)" }}
+              width={56}
+            />
+            <Tooltip content={DailyCostTooltip} cursor={{ fill: "var(--gray-a3)" }} />
+            <Legend
+              wrapperStyle={{ fontSize: 12, paddingTop: 12 }}
+              formatter={(value: string) => SERIES_LABEL[value] ?? value}
+            />
+            <Bar dataKey="fuel" stackId="cost" fill={FUEL_COLOR} cursor="pointer" />
+            <Bar
+              dataKey="maintenance"
+              stackId="cost"
+              fill={MAINTENANCE_COLOR}
+              cursor="pointer"
+              radius={[4, 4, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </Box>
+      <VisuallyHidden>
+        <table>
+          <caption>Dzienne koszty floty (paliwo, serwis) w ostatnich 30 dniach, w PLN</caption>
+          <thead>
+            <tr>
+              <th scope="col">Dzień</th>
+              <th scope="col">Paliwo</th>
+              <th scope="col">Serwis</th>
+              <th scope="col">Razem</th>
+            </tr>
+          </thead>
+          <tbody>
+            {points.map((p) => (
+              <tr key={p.date}>
+                <th scope="row">{p.label}</th>
+                <td>{fullPlnFormatter.format(p.fuel)}</td>
+                <td>{fullPlnFormatter.format(p.maintenance)}</td>
+                <td>{fullPlnFormatter.format(p.fuel + p.maintenance)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </VisuallyHidden>
+    </>
   );
 }
 
