@@ -99,6 +99,18 @@ describe("collectChips", () => {
       );
     });
 
+    it("does not flag efficiency sitting exactly on the 2σ boundary", () => {
+      expect(collectChips(withFuelBaseline({ recentFuelLiters: 100 }), NOW_MS)).not.toContain(
+        "fuel_anomaly",
+      );
+    });
+
+    it("does not flag when historical variance is zero", () => {
+      expect(
+        collectChips(withFuelBaseline({ recentFuelLiters: 200, baselineFuelStddev: 0 }), NOW_MS),
+      ).not.toContain("fuel_anomaly");
+    });
+
     it("does not flag when baseline has too few samples", () => {
       expect(
         collectChips(withFuelBaseline({ recentFuelLiters: 110, baselineFuelSamples: 3 }), NOW_MS),
@@ -137,6 +149,16 @@ describe("collectChips", () => {
       expect(collectChips(healthyRow({ recentFuelCost: 480 }), NOW_MS)).not.toContain(
         "cost_anomaly",
       );
+    });
+
+    it("flags spend using a maintenance-only baseline", () => {
+      const row = healthyRow({
+        recentMaintenanceCost: 480,
+        baselineMaintenanceCostAvg: 100,
+        baselineMaintenanceCostStddev: 10,
+        baselineMaintenanceCostSamples: 4,
+      });
+      expect(collectChips(row, NOW_MS)).toContain("cost_anomaly");
     });
   });
 

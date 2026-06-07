@@ -1,8 +1,10 @@
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { Theme } from "@radix-ui/themes";
 import type { ReactElement } from "react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { DeltaBadge } from "./delta-badge";
+
+afterEach(cleanup);
 
 const renderInTheme = (ui: ReactElement) => render(<Theme>{ui}</Theme>);
 
@@ -27,8 +29,18 @@ describe("DeltaBadge", () => {
     expect(screen.getByLabelText(/brak zmian.*neutralny/)).toBeInTheDocument();
   });
 
+  it("stays neutral sentiment when no direction is good (informational metric)", () => {
+    renderInTheme(<DeltaBadge value={0.05} format="percent" goodDirection="neutral" />);
+    expect(screen.getByLabelText(/wzrost.*neutralny/)).toBeInTheDocument();
+  });
+
   it("formats an absolute value with its unit and a sign", () => {
     renderInTheme(<DeltaBadge value={-4} format="absolute" unit="aut" goodDirection="up" />);
     expect(screen.getByText(/-4\s*aut/)).toBeInTheDocument();
+  });
+
+  it("formats a percent value with a sign", () => {
+    renderInTheme(<DeltaBadge value={0.05} format="percent" goodDirection="up" />);
+    expect(screen.getByText(/\+5,0\s*%/)).toBeInTheDocument();
   });
 });

@@ -3,7 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 import type { AttentionData, AttentionItem } from "../server/attention/types";
 import { useNeedsAttention } from "./use-needs-attention";
 
-vi.mock("react-router", () => ({
+vi.mock("react-router", async (importActual) => ({
+  ...(await importActual<typeof import("react-router")>()),
   useRevalidator: () => ({ revalidate: vi.fn() }),
 }));
 
@@ -49,6 +50,31 @@ describe("useNeedsAttention", () => {
     const { result } = renderHook(() => useNeedsAttention(state));
     if (result.current.status !== "success") throw new Error("expected success state");
     expect(result.current.items[0]?.href).toBe("/vehicles/abc");
+  });
+
+  it("falls back to the info tone for an item without chips", () => {
+    const state = okState({ items: [item({ chips: [] })], totalCount: 1 });
+    const { result } = renderHook(() => useNeedsAttention(state));
+    if (result.current.status !== "success") throw new Error("expected success state");
+    expect(result.current.items[0]?.topTone).toBe("info");
+  });
+
+  it("flags overflow when more vehicles need attention than are listed", () => {
+    const state = okState({ items: [item()], totalCount: 25 });
+    const { result } = renderHook(() => useNeedsAttention(state));
+    if (result.current.status !== "success") throw new Error("expected success state");
+    expect(result.current.hasOverflow).toBe(true);
+    expect(result.current.totalCount).toBe(25);
+  });
+
+  it("does not flag overflow when every needing vehicle is listed", () => {
+    const state = okState({
+      items: [item(), item({ vehicleId: "v2" })],
+      totalCount: 2,
+    });
+    const { result } = renderHook(() => useNeedsAttention(state));
+    if (result.current.status !== "success") throw new Error("expected success state");
+    expect(result.current.hasOverflow).toBe(false);
   });
 
   it("returns an empty state when no vehicle needs attention", () => {

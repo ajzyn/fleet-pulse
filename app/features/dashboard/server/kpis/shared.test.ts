@@ -21,6 +21,11 @@ describe("computeDeltaWithPercentage", () => {
     expect(computeDeltaWithPercentage(99.5, 100).direction).toBe("flat");
   });
 
+  it("counts a change of exactly 1% as a real move, not flat", () => {
+    expect(computeDeltaWithPercentage(101, 100).direction).toBe("up");
+    expect(computeDeltaWithPercentage(99, 100).direction).toBe("down");
+  });
+
   it("does not divide by zero when there is no prior value", () => {
     const delta = computeDeltaWithPercentage(50, 0);
     expect(delta.absolute).toBe(50);
@@ -33,8 +38,16 @@ describe("buildRollingSparkline", () => {
   const TODAY = new Date("2026-06-07T12:00:00Z");
 
   it("produces one point per day in chronological order (oldest first)", () => {
-    const series = buildRollingSparkline(3, (key) => key.length, TODAY);
-    expect(series).toHaveLength(3);
+    const keys: string[] = [];
+    buildRollingSparkline(
+      3,
+      (key) => {
+        keys.push(key);
+        return 0;
+      },
+      TODAY,
+    );
+    expect(keys).toEqual(["2026-06-05", "2026-06-06", "2026-06-07"]);
   });
 
   it("maps each day to its keyed value", () => {
