@@ -87,3 +87,21 @@ export type CostBreakdownDonutState =
       total: number;
       onRefresh: () => Promise<void>;
     };
+
+export interface MonthlyTrendPointView {
+  month: string;
+  label: string;
+  fuel: number;
+  maintenance: number;
+  utilization: number;
+}
+
+export type MonthlyTrendChartState =
+  | { status: "loading" }
+  | { status: "error"; message: string; onRetry: () => Promise<void> }
+  | { status: "empty"; reason: string; onRefresh: () => Promise<void> }
+  | {
+      status: "success";
+      points: MonthlyTrendPointView[];
+      onRefresh: () => Promise<void>;
+    };
