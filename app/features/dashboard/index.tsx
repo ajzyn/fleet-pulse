@@ -3,8 +3,10 @@ import { useRevalidateOnInterval } from "~/hooks/use-revalidate-on-interval";
 import { dateFormatter } from "~/lib/date-formatter";
 import type { Route } from "../../routes/dashboard/+types/route";
 import { AttentionList } from "./components/attention-list";
+import { CostBreakdownDonut } from "./components/cost-breakdown-donut";
+import { DailyCostChart } from "./components/daily-cost-chart";
 import { HeroKPIs } from "./components/hero-kpis";
-import { TrendsSection } from "./components/trends-section";
+import { MonthlyTrendChart } from "./components/monthly-trend-chart";
 import { useCostBreakdown } from "./hooks/use-cost-breakdown";
 import { useDailyCost } from "./hooks/use-daily-cost";
 import { useFleetKPIs } from "./hooks/use-fleet-kpis";
@@ -39,13 +41,13 @@ export function Dashboard({ loaderData }: DashboardProps) {
       />
       <Page.Body>
         <HeroKPIs configs={kpiConfigs} />
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_2fr] gap-3">
+        <div className="grid grid-cols-1 gap-3 xl:grid-cols-[1fr_2fr]">
           <AttentionList state={attention} generatedAt={loaderData.generatedAt} />
-          <TrendsSection
-            dailyCost={dailyCost}
-            costBreakdown={costBreakdown}
-            monthlyTrend={monthlyTrend}
-          />
+          <div className="space-y-3">
+            <DailyCostChart state={dailyCost} />
+            <CostBreakdownDonut state={costBreakdown} />
+          </div>
+          <MonthlyTrendChart state={monthlyTrend} className="xl:col-span-2" />
         </div>
       </Page.Body>
     </Page.Root>

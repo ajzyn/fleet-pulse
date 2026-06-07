@@ -8,6 +8,7 @@ const ROW_MIN_HEIGHT = "72px";
 const SKELETON_ROWS = 5;
 const VISIBLE_CHIPS = 2;
 const MOBILE_VISIBLE_ROWS = 3;
+const DESKTOP_VISIBLE_ROWS = 8;
 
 const CHIP_COLOR: Record<ChipTone, NonNullable<BadgeProps["color"]>> = {
   critical: "red",
@@ -41,7 +42,10 @@ interface AttentionListProps {
 export function AttentionList({ state, generatedAt }: AttentionListProps) {
   return (
     <Card size="3" asChild>
-      <section aria-label="Pojazdy wymagające uwagi">
+      <section
+        aria-label="Pojazdy wymagające uwagi"
+        style={{ display: "flex", flexDirection: "column" }}
+      >
         <Heading as="h2" size="4" mb="4">
           Wymaga uwagi
         </Heading>
@@ -85,9 +89,10 @@ function AttentionItems({
   hasOverflow: boolean;
 }) {
   const showAllLink = hasOverflow || items.length > MOBILE_VISIBLE_ROWS;
+  const desktopCapped = items.length > DESKTOP_VISIBLE_ROWS;
 
   return (
-    <Box>
+    <div className="flex flex-1 flex-col min-h-0">
       <ul className="list-none p-0 m-0">
         {items.map((item, index) => (
           <AttentionRow
@@ -96,6 +101,8 @@ function AttentionItems({
             className={[
               index >= MOBILE_VISIBLE_ROWS ? "max-md:hidden" : "",
               index === MOBILE_VISIBLE_ROWS - 1 ? "max-md:border-b-0" : "",
+              index >= DESKTOP_VISIBLE_ROWS ? "xl:hidden" : "",
+              index === DESKTOP_VISIBLE_ROWS - 1 ? "xl:border-b-0" : "",
             ]
               .filter(Boolean)
               .join(" ")}
@@ -105,8 +112,9 @@ function AttentionItems({
       {showAllLink ? (
         <Box
           pt="3"
-          mt="2"
-          className={`border-t border-[var(--gray-a4)] ${hasOverflow ? "" : "md:hidden"}`}
+          className={`mt-2 xl:mt-auto text-right border-t border-[var(--gray-a4)] ${
+            hasOverflow ? "" : `md:hidden${desktopCapped ? " xl:block" : ""}`
+          }`}
         >
           <Link
             to="/vehicles?needs_attention=true"
@@ -116,7 +124,7 @@ function AttentionItems({
           </Link>
         </Box>
       ) : null}
-    </Box>
+    </div>
   );
 }
 

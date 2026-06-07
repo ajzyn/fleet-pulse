@@ -40,9 +40,15 @@ const SERIES_LABEL: Record<string, string> = {
   utilization: "Śr. przebieg (km/dzień)",
 };
 
-export function MonthlyTrendChart({ state }: { state: MonthlyTrendChartState }) {
+export function MonthlyTrendChart({
+  state,
+  className,
+}: {
+  state: MonthlyTrendChartState;
+  className?: string;
+}) {
   return (
-    <Card size="3" asChild>
+    <Card size="3" asChild className={className}>
       <section aria-label="Trend kosztów i wykorzystania w ostatnich 12 miesiącach">
         <Heading as="h2" size="4" mb="4">
           Trend miesięczny (12 miesięcy)
