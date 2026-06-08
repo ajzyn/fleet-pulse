@@ -1,4 +1,5 @@
 import { RouteErrorFallback } from "~/components/feedback/route-error-fallback";
+import VehicleDetail from "~/features/vehicles/detail";
 import { parseVehicleId } from "~/features/vehicles/detail/server/detail.params.server";
 import { loadVehicleDetail } from "~/features/vehicles/detail/server/loader.server";
 import type { Route } from "./+types/details";
@@ -16,7 +17,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 }
 
 export default function VehicleDetailRoute({ loaderData }: Route.ComponentProps) {
-  return <div>{loaderData.vehicle.plateNumber}</div>;
+  return <VehicleDetail loaderData={loaderData} />;
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
