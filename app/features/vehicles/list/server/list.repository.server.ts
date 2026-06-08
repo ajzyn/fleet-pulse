@@ -1,7 +1,7 @@
 import { db } from "@db/client";
 import { vehicles } from "@db/schema";
 import { and, asc, count, desc, eq, ilike, or } from "drizzle-orm";
-import type { VehiclesQuery } from "./list.query";
+import type { VehiclesQuery } from "./list.params.server";
 
 const SORT_COLUMNS = {
   year: vehicles.year,

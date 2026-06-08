@@ -26,7 +26,14 @@ export const makeUniqueGenerator = (gen: () => string) => {
   };
 };
 
-export const PERIOD_END = new Date("2026-05-04T00:00:00Z");
+const today = new Date();
+const defaultPeriodEnd = new Date(
+  Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+);
+
+export const PERIOD_END = process.env.SEED_PERIOD_END
+  ? new Date(process.env.SEED_PERIOD_END)
+  : defaultPeriodEnd;
 export const PERIOD_START = addDays(PERIOD_END, -180);
 
 export const VEHICLE_COUNT = 150;

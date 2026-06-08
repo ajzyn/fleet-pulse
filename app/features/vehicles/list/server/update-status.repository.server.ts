@@ -1,8 +1,8 @@
 import { db } from "@db/client";
 import { vehicles, type Vehicle } from "@db/schema";
 import { and, eq } from "drizzle-orm";
-import { ActionErrorKind, type ActionErr, type ActionResult } from "~/lib/action";
-import type { VehicleStatusUpdate } from "./update-status.schema";
+import { ActionErrorKind, type ActionErr, type ActionResult } from "~/lib/server/action";
+import type { VehicleStatusUpdate } from "./update-status.schema.server";
 
 export type UpdateStatusResult = ActionResult<
   { vehicle: Vehicle },

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import z from "zod";
-import { parseVehiclesQuery } from "./list.query";
+import { parseVehiclesQuery } from "./list.params.server";
 
 const url = (search: string) => new URL(`http://localhost/vehicles${search}`);
 

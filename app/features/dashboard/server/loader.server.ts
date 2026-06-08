@@ -1,0 +1,27 @@
+import { settledToLoaderState, type LoaderState } from "~/lib/server/loader";
+import { getNeedsAttention } from "./attention.repository.server";
+import type { AttentionData } from "./attention/types";
+import { getKpis, type DashboardKpis } from "./kpis.repository.server";
+import { getTrends, type DashboardTrends } from "./trends.repository.server";
+
+export interface DashboardData {
+  kpis: LoaderState<DashboardKpis>;
+  attention: LoaderState<AttentionData>;
+  trends: LoaderState<DashboardTrends>;
+  generatedAt: string;
+}
+
+export const loadDashboard = async (): Promise<DashboardData> => {
+  const [kpis, attention, trends] = await Promise.allSettled([
+    getKpis(),
+    getNeedsAttention(),
+    getTrends(),
+  ]);
+
+  return {
+    kpis: settledToLoaderState(kpis),
+    attention: settledToLoaderState(attention),
+    trends: settledToLoaderState(trends),
+    generatedAt: new Date().toISOString(),
+  };
+};

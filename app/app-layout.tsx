@@ -2,7 +2,8 @@ import { Outlet } from "react-router";
 import { Toaster } from "sonner";
 import { Sidenav } from "~/components/sidenav/sidenav";
 import { NavProgress } from "./components/feedback/nav-progress";
-import { MobileNav } from "./components/sidenav/mobile-nav";
+import { BottomNav } from "./components/sidenav/bottom-nav";
+import { MobileTopbar } from "./components/sidenav/mobile-topbar";
 
 export default function AppLayout() {
   return (
@@ -10,11 +11,12 @@ export default function AppLayout() {
       <NavProgress />
       <Sidenav />
       <div className="flex-1 flex flex-col min-w-0">
-        <MobileNav />
-        <main className="flex-1">
+        <MobileTopbar />
+        <main className="flex-1 pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
           <Outlet />
         </main>
-        <Toaster position="bottom-right" richColors closeButton />
+        <BottomNav />
+        <Toaster position="bottom-right" richColors closeButton mobileOffset={{ bottom: "5rem" }} />
       </div>
     </div>
   );

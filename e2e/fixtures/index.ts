@@ -4,6 +4,7 @@ import { neon } from "@neondatabase/serverless";
 import { test as base, expect, type Page } from "@playwright/test";
 import { inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/neon-http";
+import { DashboardPage } from "../pages/dashboard.page";
 import { VehiclesListPage } from "../pages/vehicles-list.page";
 import { vehicleFactory } from "../support/factories";
 
@@ -12,6 +13,7 @@ type Db = ReturnType<typeof drizzle<typeof schema>>;
 interface Fixtures {
   db: Db;
   vehiclesListPage: VehiclesListPage;
+  dashboardPage: DashboardPage;
   checkA11y: (page: Page) => Promise<void>;
   createVehicle: (overrides?: Partial<schema.NewVehicle>) => Promise<schema.Vehicle>;
 }
@@ -24,6 +26,9 @@ export const test = base.extend<Fixtures>({
   },
   vehiclesListPage: async ({ page }, use) => {
     await use(new VehiclesListPage(page));
+  },
+  dashboardPage: async ({ page }, use) => {
+    await use(new DashboardPage(page));
   },
   checkA11y: async ({}, use) => {
     await use(async (page) => {

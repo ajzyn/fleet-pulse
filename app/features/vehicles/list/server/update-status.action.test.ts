@@ -1,13 +1,13 @@
 import type { Vehicle } from "@db/schema";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ActionErrorKind } from "~/lib/action";
+import { ActionErrorKind } from "~/lib/server/action";
 
-vi.mock("./update-status.repository", () => ({
+vi.mock("./update-status.repository.server", () => ({
   updateVehicleStatus: vi.fn(),
 }));
 
-const { updateVehicleStatus } = await import("./update-status.repository");
-const { handleUpdateStatus } = await import("./update-status.action");
+const { updateVehicleStatus } = await import("./update-status.repository.server");
+const { handleUpdateStatus } = await import("./update-status.action.server");
 
 const updateVehicleStatusMock = vi.mocked(updateVehicleStatus);
 
