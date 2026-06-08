@@ -2,7 +2,7 @@ import type { Vehicle } from "@db/schema";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ActionErrorKind } from "~/lib/server/action";
 
-vi.mock("./update-status.repository", () => ({
+vi.mock("./update-status.repository.server", () => ({
   updateVehicleStatus: vi.fn(),
 }));
 
