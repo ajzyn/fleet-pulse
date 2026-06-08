@@ -16,7 +16,11 @@ export function Sparkline({ data, color = DEFAULT_COLOR }: SparklineProps) {
   return (
     <Box aria-hidden width="100%" height="100%">
       <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 0, height: 32 }}>
-        <AreaChart data={chartData} margin={{ top: 2, right: 0, bottom: 2, left: 0 }}>
+        <AreaChart
+          data={chartData}
+          margin={{ top: 2, right: 0, bottom: 2, left: 0 }}
+          accessibilityLayer={false}
+        >
           <Area
             dataKey="value"
             type="monotone"
