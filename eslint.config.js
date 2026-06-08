@@ -48,6 +48,13 @@ export default defineConfig(
         },
       ],
       "@typescript-eslint/no-unnecessary-type-parameters": "warn",
+      "@typescript-eslint/only-throw-error": [
+        "error",
+        {
+          allow: [{ from: "package", package: "react-router", name: "DataWithResponseInit" }],
+          allowRethrowing: true,
+        },
+      ],
     },
   },
   {
