@@ -1,9 +1,9 @@
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { Badge, Flex, Link } from "@radix-ui/themes";
+import { Flex, Link } from "@radix-ui/themes";
 import { Link as RouterLink } from "react-router";
 import { Page } from "~/components/page";
+import { VehicleStatusCell } from "~/features/vehicles/shared/components/vehicle-status-cell";
 import type { Route } from "../../../routes/vehicles/+types/details";
-import { getStatusLabel, statusColor } from "../shared/utils/status-presentation";
 import { VehicleSpecs } from "./components/vehicle-specs";
 import { useVehicleHeader } from "./hooks/use-vehicle-header";
 
@@ -29,11 +29,7 @@ export default function VehicleDetail({ loaderData }: VehicleDetailProps) {
       <Page.Header
         title={view.title}
         subtitle={view.plateNumber}
-        actions={
-          <Badge color={statusColor[view.status]} variant="soft" size="2">
-            {getStatusLabel(view.status)}
-          </Badge>
-        }
+        actions={<VehicleStatusCell vehicle={loaderData.vehicle} size="3" />}
       />
       <Page.Body>
         <VehicleSpecs view={view} />
