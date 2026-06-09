@@ -1,6 +1,6 @@
 import type { Vehicle } from "@db/schema";
 import type { ColumnDef } from "@tanstack/react-table";
-import { VehicleStatusCell } from "./vehicle-status-cell";
+import { VehicleStatusCell } from "~/features/vehicles/shared/components/vehicle-status-cell";
 
 export const vehiclesTableColumns: ColumnDef<Vehicle>[] = [
   { accessorKey: "plateNumber", header: "Plate", size: 120 },

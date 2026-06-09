@@ -1,10 +1,10 @@
 import { data } from "react-router";
 import { RouteErrorFallback } from "~/components/feedback/route-error-fallback";
 import VehiclesList from "~/features/vehicles/list";
-import { VEHICLES_INTENT } from "~/features/vehicles/list/server/intents";
 import { parseVehiclesQuery } from "~/features/vehicles/list/server/list.params.server";
 import { listVehicles } from "~/features/vehicles/list/server/list.repository.server";
-import { handleUpdateStatus } from "~/features/vehicles/list/server/update-status.action.server";
+import { VEHICLES_INTENT } from "~/features/vehicles/shared/server/intents";
+import { handleUpdateStatus } from "~/features/vehicles/shared/server/update-status.action.server";
 import { INTENT_FIELD, UNKNOWN_INTENT } from "~/lib/server/action";
 import type { Route } from "./+types/list";
 

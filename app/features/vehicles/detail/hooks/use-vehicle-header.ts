@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { plnFormatter } from "~/lib/number-formatter";
-import { getFuelLabel } from "../../list/utils/fuel-presentation";
+import { getFuelLabel } from "../../shared/utils/fuel-presentation";
 import type { VehicleDetailData } from "../server/loader.server";
 import type { VehicleHeaderView } from "../types";
 

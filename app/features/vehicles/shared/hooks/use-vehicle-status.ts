@@ -4,12 +4,12 @@ import { useFetcher, useRevalidator } from "react-router";
 import { toast } from "sonner";
 import { useDisclosure } from "~/hooks/use-disclosure";
 import { ActionErrorKind, INTENT_FIELD } from "~/lib/server/action";
-import type { action } from "~/routes/vehicles/list";
 import { VEHICLES_INTENT } from "../server/intents";
+import type { handleUpdateStatus } from "../server/update-status.action.server";
 import { getStatusLabel } from "../utils/status-presentation";
 
 export const useStatusCell = (vehicle: Vehicle) => {
-  const fetcher = useFetcher<typeof action>({ key: `vehicle-status-${vehicle.id}` });
+  const fetcher = useFetcher<typeof handleUpdateStatus>({ key: `vehicle-status-${vehicle.id}` });
   const retireDialog = useDisclosure();
   const revalidator = useRevalidator();
 

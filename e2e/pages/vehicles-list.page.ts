@@ -1,6 +1,6 @@
 import type { Vehicle } from "@db/schema";
 import type { Locator, Page } from "@playwright/test";
-import { getStatusLabel } from "~/features/vehicles/list/utils/status-presentation";
+import { getStatusLabel } from "~/features/vehicles/shared/utils/status-presentation";
 
 export class VehiclesListPage {
   readonly table: Locator;

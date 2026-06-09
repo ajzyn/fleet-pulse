@@ -3,7 +3,7 @@ import { Badge, Flex, Link } from "@radix-ui/themes";
 import { Link as RouterLink } from "react-router";
 import { Page } from "~/components/page";
 import type { Route } from "../../../routes/vehicles/+types/details";
-import { getStatusLabel, statusColor } from "../list/utils/status-presentation";
+import { getStatusLabel, statusColor } from "../shared/utils/status-presentation";
 import { VehicleSpecs } from "./components/vehicle-specs";
 import { useVehicleHeader } from "./hooks/use-vehicle-header";
 
