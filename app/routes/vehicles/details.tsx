@@ -3,6 +3,7 @@ import { RouteErrorFallback } from "~/components/feedback/route-error-fallback";
 import VehicleDetail from "~/features/vehicles/detail";
 import { parseVehicleId } from "~/features/vehicles/detail/server/detail.params.server";
 import { loadVehicleDetail } from "~/features/vehicles/detail/server/loader.server";
+import { handleUpdatePlate } from "~/features/vehicles/detail/server/update-plate.action.server";
 import { VEHICLES_INTENT } from "~/features/vehicles/shared/server/intents";
 import { handleUpdateStatus } from "~/features/vehicles/shared/server/update-status.action.server";
 import { INTENT_FIELD, UNKNOWN_INTENT } from "~/lib/server/action";
@@ -27,6 +28,8 @@ export async function action({ request }: Route.ActionArgs) {
   switch (intent) {
     case VEHICLES_INTENT.updateStatus:
       return handleUpdateStatus(formData);
+    case VEHICLES_INTENT.updatePlate:
+      return handleUpdatePlate(formData);
     default:
       return data({ ok: false, kind: UNKNOWN_INTENT }, { status: 400 });
   }

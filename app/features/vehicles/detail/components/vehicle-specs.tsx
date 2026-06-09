@@ -1,14 +1,43 @@
-import { Card, Code, DataList, Heading } from "@radix-ui/themes";
+import type { Vehicle } from "@db/schema";
+import { Pencil1Icon } from "@radix-ui/react-icons";
+import { Button, Card, Code, DataList, Flex, Heading, Text, TextField } from "@radix-ui/themes";
+import { useEffect, useRef } from "react";
+import { usePlateEdit } from "../hooks/use-plate-edit";
 import type { VehicleHeaderView } from "../types";
 
-export function VehicleSpecs({ view }: { view: VehicleHeaderView }) {
+interface VehicleSpecsProps {
+  view: VehicleHeaderView;
+  vehicle: Vehicle;
+}
+
+export function VehicleSpecs({ view, vehicle }: VehicleSpecsProps) {
+  const plate = usePlateEdit(vehicle);
+
   return (
     <Card size="3" asChild>
       <section aria-label="Dane pojazdu">
-        <Heading as="h2" size="4" mb="4">
-          Dane pojazdu
-        </Heading>
+        <Flex justify="between" align="center" mb="4" gap="3">
+          <Heading as="h2" size="4">
+            Dane pojazdu
+          </Heading>
+          {!plate.editing && (
+            <Button variant="ghost" color="gray" onClick={plate.onEdit}>
+              <Pencil1Icon aria-hidden />
+              Edytuj
+            </Button>
+          )}
+        </Flex>
         <DataList.Root orientation={{ initial: "vertical", sm: "horizontal" }}>
+          <DataList.Item>
+            <DataList.Label>Tablica</DataList.Label>
+            <DataList.Value>
+              {plate.editing ? (
+                <PlateEditField plate={plate} />
+              ) : (
+                <Text>{plate.optimisticPlate}</Text>
+              )}
+            </DataList.Value>
+          </DataList.Item>
           <DataList.Item>
             <DataList.Label>VIN</DataList.Label>
             <DataList.Value>
@@ -46,5 +75,54 @@ export function VehicleSpecs({ view }: { view: VehicleHeaderView }) {
         </DataList.Root>
       </section>
     </Card>
+  );
+}
+
+function PlateEditField({ plate }: { plate: ReturnType<typeof usePlateEdit> }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+    inputRef.current?.select();
+  }, []);
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        const value = new FormData(event.currentTarget).get("plateNumber");
+        plate.submit(typeof value === "string" ? value : "");
+      }}
+    >
+      <Flex direction="column" gap="1" align="start">
+        <Flex gap="2" align="center" wrap="wrap">
+          <TextField.Root
+            ref={inputRef}
+            name="plateNumber"
+            defaultValue={plate.optimisticPlate}
+            disabled={plate.isPending}
+            aria-label="Tablica rejestracyjna"
+            {...(plate.fieldError && { color: "red" as const })}
+          />
+          <Button type="submit" loading={plate.isPending}>
+            Zapisz
+          </Button>
+          <Button
+            type="button"
+            variant="soft"
+            color="gray"
+            disabled={plate.isPending}
+            onClick={plate.onCancel}
+          >
+            Anuluj
+          </Button>
+        </Flex>
+        {plate.fieldError && (
+          <Text size="1" color="red">
+            {plate.fieldError}
+          </Text>
+        )}
+      </Flex>
+    </form>
   );
 }

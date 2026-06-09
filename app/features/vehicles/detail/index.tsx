@@ -28,11 +28,10 @@ export default function VehicleDetail({ loaderData }: VehicleDetailProps) {
       </Flex>
       <Page.Header
         title={view.title}
-        subtitle={view.plateNumber}
         actions={<VehicleStatusCell vehicle={loaderData.vehicle} size="3" />}
       />
       <Page.Body>
-        <VehicleSpecs view={view} />
+        <VehicleSpecs view={view} vehicle={loaderData.vehicle} />
       </Page.Body>
     </Page.Root>
   );

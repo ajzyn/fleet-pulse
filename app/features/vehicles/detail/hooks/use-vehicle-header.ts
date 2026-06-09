@@ -10,7 +10,6 @@ export const useVehicleHeader = ({
   currentDriver,
 }: VehicleDetailData): VehicleHeaderView => ({
   title: `${vehicle.make} ${vehicle.model}`,
-  plateNumber: vehicle.plateNumber,
   vin: vehicle.vin,
   year: vehicle.year,
   fuelLabel: getFuelLabel(vehicle.fuelType),
