@@ -1,11 +1,13 @@
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
-import { Flex, Link } from "@radix-ui/themes";
+import { Flex, Link, Text } from "@radix-ui/themes";
 import { Link as RouterLink } from "react-router";
 import { Page } from "~/components/page";
 import { VehicleStatusCell } from "~/features/vehicles/shared/components/vehicle-status-cell";
 import type { Route } from "../../../routes/vehicles/+types/details";
 import { VehicleSpecs } from "./components/vehicle-specs";
+import { VehicleTimeline } from "./components/vehicle-timeline";
 import { useVehicleHeader } from "./hooks/use-vehicle-header";
+import { useVehicleTimeline } from "./hooks/use-vehicle-timeline";
 
 interface VehicleDetailProps {
   loaderData: Route.ComponentProps["loaderData"];
@@ -13,6 +15,7 @@ interface VehicleDetailProps {
 
 export default function VehicleDetail({ loaderData }: VehicleDetailProps) {
   const view = useVehicleHeader(loaderData);
+  const timeline = useVehicleTimeline(loaderData.timeline);
 
   return (
     <Page.Root>
@@ -28,10 +31,24 @@ export default function VehicleDetail({ loaderData }: VehicleDetailProps) {
       </Flex>
       <Page.Header
         title={view.title}
-        actions={<VehicleStatusCell vehicle={loaderData.vehicle} size="3" />}
+        actions={
+          <Flex align="center" gap="2">
+            <Text size="2" color="gray">
+              Vehicle status
+            </Text>
+            <VehicleStatusCell vehicle={loaderData.vehicle} size="3" />
+          </Flex>
+        }
       />
       <Page.Body>
-        <VehicleSpecs view={view} vehicle={loaderData.vehicle} />
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(280px,340px)_1fr] lg:items-start">
+          <div className="lg:sticky lg:top-4">
+            <VehicleSpecs view={view} vehicle={loaderData.vehicle} />
+          </div>
+          <div className="space-y-6">
+            <VehicleTimeline state={timeline} />
+          </div>
+        </div>
       </Page.Body>
     </Page.Root>
   );
