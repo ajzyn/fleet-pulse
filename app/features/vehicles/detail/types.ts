@@ -29,3 +29,36 @@ export type VehicleTimelineState = AsyncViewState<{
   total: number;
   shownCount: number;
 }>;
+
+export interface MileagePointView {
+  month: string;
+  label: string;
+  odometerKm: number | null;
+}
+
+export interface CostPointView {
+  month: string;
+  label: string;
+  fuel: number;
+  maintenance: number;
+}
+
+export interface EfficiencyPointView {
+  month: string;
+  label: string;
+  lPer100: number | null;
+}
+
+export interface VehicleStatsKpisView {
+  totalCost: string;
+  avgEfficiency: string;
+  avgKmPerDay: string;
+}
+
+export type VehicleStatsState = AsyncViewState<{
+  kpis: VehicleStatsKpisView;
+  mileage: MileagePointView[];
+  costs: CostPointView[];
+  efficiency: EfficiencyPointView[];
+  hasEfficiency: boolean;
+}>;

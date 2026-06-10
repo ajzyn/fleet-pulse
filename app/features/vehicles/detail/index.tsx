@@ -5,8 +5,10 @@ import { Page } from "~/components/page";
 import { VehicleStatusCell } from "~/features/vehicles/shared/components/vehicle-status-cell";
 import type { Route } from "../../../routes/vehicles/+types/details";
 import { VehicleSpecs } from "./components/vehicle-specs";
+import { VehicleStats } from "./components/vehicle-stats";
 import { VehicleTimeline } from "./components/vehicle-timeline";
 import { useVehicleHeader } from "./hooks/use-vehicle-header";
+import { useVehicleStats } from "./hooks/use-vehicle-stats";
 import { useVehicleTimeline } from "./hooks/use-vehicle-timeline";
 
 interface VehicleDetailProps {
@@ -15,6 +17,7 @@ interface VehicleDetailProps {
 
 export default function VehicleDetail({ loaderData }: VehicleDetailProps) {
   const view = useVehicleHeader(loaderData);
+  const stats = useVehicleStats(loaderData.stats, loaderData.vehicle.purchaseDate);
   const timeline = useVehicleTimeline(loaderData.timeline);
 
   return (
@@ -46,6 +49,7 @@ export default function VehicleDetail({ loaderData }: VehicleDetailProps) {
             <VehicleSpecs view={view} vehicle={loaderData.vehicle} />
           </div>
           <div className="space-y-6">
+            <VehicleStats state={stats} />
             <VehicleTimeline state={timeline} />
           </div>
         </div>
