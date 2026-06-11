@@ -10,7 +10,7 @@ import {
   YAxis,
   type TooltipContentProps,
 } from "recharts";
-import { plnCompactFormatter, plnFormatter } from "~/lib/number-formatter";
+import { plnFormatter } from "~/lib/number-formatter";
 import { isTooltipVisible, valueByDataKey } from "~/lib/recharts/tooltip";
 import type { CostPointView } from "../types";
 
@@ -18,6 +18,11 @@ const CHART_HEIGHT = 240;
 const CHART_HEIGHT_CLASS = "h-[240px]";
 const FUEL_COLOR = "var(--orange-9)";
 const MAINTENANCE_COLOR = "var(--blue-9)";
+
+const costCompactFormatter = new Intl.NumberFormat("pl-PL", {
+  notation: "compact",
+  maximumFractionDigits: 0,
+});
 
 const SERIES_LABEL: Record<string, string> = {
   fuel: "Paliwo",
@@ -29,7 +34,7 @@ export function VehicleCostChart({ points }: { points: CostPointView[] }) {
     <Card size="3" asChild>
       <section aria-label="Miesięczne koszty paliwa i serwisu">
         <Heading as="h2" size="4" mb="4">
-          Koszty miesięczne (12 miesięcy)
+          Koszty miesięczne (zł)
         </Heading>
         <Box className={`${CHART_HEIGHT_CLASS} -mx-3 sm:mx-0`}>
           <ResponsiveContainer
@@ -48,11 +53,11 @@ export function VehicleCostChart({ points }: { points: CostPointView[] }) {
                 minTickGap={16}
               />
               <YAxis
-                tickFormatter={(v: number) => plnCompactFormatter.format(v)}
+                tickFormatter={(v: number) => costCompactFormatter.format(v)}
                 tick={{ fill: "var(--gray-11)", fontSize: 11 }}
                 tickLine={false}
                 axisLine={{ stroke: "var(--gray-a5)" }}
-                width={48}
+                width={40}
               />
               <Tooltip content={CostTooltip} cursor={{ fill: "var(--gray-a3)" }} />
               <Legend

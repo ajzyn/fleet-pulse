@@ -29,9 +29,13 @@ const KPI_ITEMS: { key: keyof VehicleStatsKpisView; label: string }[] = [
 function StatsKpis({ kpis }: { kpis: VehicleStatsKpisView }) {
   return (
     <section aria-label="Wskaźniki pojazdu">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        {KPI_ITEMS.map((item) => (
-          <Card key={item.key} size="2">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {KPI_ITEMS.map((item, i) => (
+          <Card
+            key={item.key}
+            size="2"
+            className={i === 0 ? "col-span-2 sm:col-span-1" : undefined}
+          >
             <Flex direction="column" gap="1">
               <Text size="1" color="gray" weight="medium">
                 {item.label}
@@ -50,9 +54,9 @@ function StatsKpis({ kpis }: { kpis: VehicleStatsKpisView }) {
 function StatsSkeleton() {
   return (
     <Flex direction="column" gap="6">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {Array.from({ length: 3 }, (_, i) => (
-          <Card key={i} size="2">
+          <Card key={i} size="2" className={i === 0 ? "col-span-2 sm:col-span-1" : undefined}>
             <Flex direction="column" gap="2">
               <Skeleton width="60%" height="14px" />
               <Skeleton width="80%" height="28px" />

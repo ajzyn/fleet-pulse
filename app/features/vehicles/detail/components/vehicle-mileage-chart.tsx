@@ -16,10 +16,7 @@ const CHART_HEIGHT = 240;
 const CHART_HEIGHT_CLASS = "h-[240px]";
 const MILEAGE_COLOR = "var(--iris-9)";
 
-const kmCompactFormatter = new Intl.NumberFormat("pl-PL", {
-  notation: "compact",
-  maximumFractionDigits: 0,
-});
+const kmThousandsFormatter = new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 0 });
 const kmFormatter = new Intl.NumberFormat("pl-PL");
 
 export function VehicleMileageChart({ points }: { points: MileagePointView[] }) {
@@ -27,7 +24,7 @@ export function VehicleMileageChart({ points }: { points: MileagePointView[] }) 
     <Card size="3" asChild>
       <section aria-label="Przebieg w czasie">
         <Heading as="h2" size="4" mb="4">
-          Przebieg (12 miesięcy)
+          Przebieg licznika (tys. km)
         </Heading>
         <Box className={`${CHART_HEIGHT_CLASS} -mx-3 sm:mx-0`}>
           <ResponsiveContainer
@@ -48,11 +45,11 @@ export function VehicleMileageChart({ points }: { points: MileagePointView[] }) 
               />
               <YAxis
                 domain={["dataMin", "dataMax"]}
-                tickFormatter={(v: number) => kmCompactFormatter.format(v)}
+                tickFormatter={(v: number) => kmThousandsFormatter.format(v / 1000)}
                 tick={{ fill: "var(--gray-11)", fontSize: 11 }}
                 tickLine={false}
                 axisLine={{ stroke: "var(--gray-a5)" }}
-                width={44}
+                width={32}
               />
               <Tooltip content={MileageTooltip} cursor={{ stroke: "var(--gray-a5)" }} />
               <Line

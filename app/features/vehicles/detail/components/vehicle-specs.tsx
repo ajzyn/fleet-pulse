@@ -1,7 +1,8 @@
 import type { Vehicle } from "@db/schema";
 import { Pencil1Icon } from "@radix-ui/react-icons";
-import { Button, Card, Code, DataList, Flex, Heading, Text, TextField } from "@radix-ui/themes";
+import { Button, Card, Code, Flex, Heading, Text, TextField } from "@radix-ui/themes";
 import { useEffect, useRef } from "react";
+import { ResponsiveDataList, type DataPair } from "~/components/responsive-data-list";
 import { usePlateEdit } from "../hooks/use-plate-edit";
 import type { VehicleHeaderView } from "../types";
 
@@ -12,6 +13,26 @@ interface VehicleSpecsProps {
 
 export function VehicleSpecs({ view, vehicle }: VehicleSpecsProps) {
   const plate = usePlateEdit(vehicle);
+
+  const items: DataPair[] = [
+    {
+      label: "Tablica",
+      fullWidth: true,
+      value: plate.editing ? (
+        <PlateEditField plate={plate} />
+      ) : (
+        <Text>{plate.optimisticPlate}</Text>
+      ),
+    },
+    { label: "VIN", fullWidth: true, value: <Code variant="ghost">{view.vin}</Code> },
+    { label: "Rok", value: view.year },
+    { label: "Paliwo", value: view.fuelLabel },
+    { label: "Przebieg", value: view.mileage },
+    { label: "Kierowca", value: view.driver },
+    { label: "Ostatni serwis", value: view.lastService },
+    { label: "Data zakupu", value: view.purchaseDate },
+    { label: "Cena zakupu", value: view.purchasePrice },
+  ];
 
   return (
     <Card size="3" asChild>
@@ -27,52 +48,7 @@ export function VehicleSpecs({ view, vehicle }: VehicleSpecsProps) {
             </Button>
           )}
         </Flex>
-        <DataList.Root orientation="horizontal">
-          <DataList.Item>
-            <DataList.Label>Tablica</DataList.Label>
-            <DataList.Value>
-              {plate.editing ? (
-                <PlateEditField plate={plate} />
-              ) : (
-                <Text>{plate.optimisticPlate}</Text>
-              )}
-            </DataList.Value>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.Label>VIN</DataList.Label>
-            <DataList.Value>
-              <Code variant="ghost">{view.vin}</Code>
-            </DataList.Value>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.Label>Rok</DataList.Label>
-            <DataList.Value>{view.year}</DataList.Value>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.Label>Paliwo</DataList.Label>
-            <DataList.Value>{view.fuelLabel}</DataList.Value>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.Label>Przebieg</DataList.Label>
-            <DataList.Value>{view.mileage}</DataList.Value>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.Label>Kierowca</DataList.Label>
-            <DataList.Value>{view.driver}</DataList.Value>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.Label>Ostatni serwis</DataList.Label>
-            <DataList.Value>{view.lastService}</DataList.Value>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.Label>Data zakupu</DataList.Label>
-            <DataList.Value>{view.purchaseDate}</DataList.Value>
-          </DataList.Item>
-          <DataList.Item>
-            <DataList.Label>Cena zakupu</DataList.Label>
-            <DataList.Value>{view.purchasePrice}</DataList.Value>
-          </DataList.Item>
-        </DataList.Root>
+        <ResponsiveDataList items={items} />
       </section>
     </Card>
   );
@@ -94,16 +70,17 @@ function PlateEditField({ plate }: { plate: ReturnType<typeof usePlateEdit> }) {
         plate.submit(typeof value === "string" ? value : "");
       }}
     >
-      <Flex direction="column" gap="1" align="start">
-        <Flex gap="2" align="center" wrap="wrap">
-          <TextField.Root
-            ref={inputRef}
-            name="plateNumber"
-            defaultValue={plate.optimisticPlate}
-            disabled={plate.isPending}
-            aria-label="Tablica rejestracyjna"
-            {...(plate.fieldError && { color: "red" as const })}
-          />
+      <Flex direction="column" gap="2" align="stretch">
+        <TextField.Root
+          ref={inputRef}
+          name="plateNumber"
+          defaultValue={plate.optimisticPlate}
+          disabled={plate.isPending}
+          aria-label="Tablica rejestracyjna"
+          className="w-full sm:max-w-[200px]"
+          {...(plate.fieldError && { color: "red" as const })}
+        />
+        <Flex gap="2">
           <Button type="submit" loading={plate.isPending}>
             Zapisz
           </Button>
