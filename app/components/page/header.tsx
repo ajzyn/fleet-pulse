@@ -8,7 +8,14 @@ interface HeaderProps {
 }
 export function Header({ title, subtitle, actions }: HeaderProps) {
   return (
-    <Flex justify="between" align="start" mb="6" gap="4" wrap="wrap">
+    <Flex
+      direction={{ initial: "column", sm: "row" }}
+      justify="between"
+      align="start"
+      mb="6"
+      gap="4"
+      wrap="wrap"
+    >
       <Box>
         <Heading size="6" mb={subtitle ? "1" : "0"}>
           {title}

@@ -27,7 +27,7 @@ export function VehicleSpecs({ view, vehicle }: VehicleSpecsProps) {
             </Button>
           )}
         </Flex>
-        <DataList.Root orientation={{ initial: "vertical", sm: "horizontal" }}>
+        <DataList.Root orientation="horizontal">
           <DataList.Item>
             <DataList.Label>Tablica</DataList.Label>
             <DataList.Value>
