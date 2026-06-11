@@ -18,7 +18,7 @@ interface VehicleDetailProps {
 export default function VehicleDetail({ loaderData }: VehicleDetailProps) {
   const view = useVehicleHeader(loaderData);
   const stats = useVehicleStats(loaderData.stats, loaderData.vehicle.purchaseDate);
-  const timeline = useVehicleTimeline(loaderData.timeline);
+  const timeline = useVehicleTimeline(loaderData.timeline, loaderData.vehicle.id);
 
   return (
     <Page.Root>

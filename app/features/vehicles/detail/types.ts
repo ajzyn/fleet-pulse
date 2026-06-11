@@ -28,6 +28,11 @@ export type VehicleTimelineState = DataViewState<{
   events: TimelineEventView[];
   total: number;
   shownCount: number;
+  hasMore: boolean;
+  isLoadingMore: boolean;
+  loadMoreError: boolean;
+  onLoadMore: () => void;
+  onRetryLoadMore: () => void;
 }>;
 
 export interface MileagePointView {

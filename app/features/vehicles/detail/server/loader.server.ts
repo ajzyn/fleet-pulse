@@ -1,6 +1,7 @@
 import { data } from "react-router";
 import { settledToLoaderState, type LoaderState } from "~/lib/server/loader";
-import { getVehicleTimeline, type VehicleTimeline } from "./timeline.repository.server";
+import type { Page } from "~/lib/server/pagination";
+import { getVehicleTimeline, type TimelineEvent } from "./timeline.repository.server";
 import {
   getVehicleMonthlyStats,
   type VehicleMonthlyStatsPoint,
@@ -10,7 +11,7 @@ import { getVehicleById, type VehicleDetail } from "./vehicle.repository.server"
 export interface VehicleDetailData {
   vehicle: VehicleDetail["vehicle"];
   currentDriver: VehicleDetail["currentDriver"];
-  timeline: LoaderState<VehicleTimeline>;
+  timeline: LoaderState<Page<TimelineEvent>>;
   stats: LoaderState<VehicleMonthlyStatsPoint[]>;
 }
 

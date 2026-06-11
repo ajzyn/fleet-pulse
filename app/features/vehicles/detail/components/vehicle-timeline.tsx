@@ -1,4 +1,4 @@
-import { Badge, Box, Card, Flex, Heading, Skeleton, Text } from "@radix-ui/themes";
+import { Badge, Box, Button, Card, Flex, Heading, Skeleton, Text } from "@radix-ui/themes";
 import { DataView } from "~/components/feedback/data-view";
 import type { TimelineEventView, VehicleTimelineState } from "../types";
 
@@ -19,11 +19,31 @@ export function VehicleTimeline({ state }: { state: VehicleTimelineState }) {
                   ))}
                 </ol>
               </Flex>
-              {data.total > data.shownCount && (
+              <Flex direction="column" gap="2" align="start">
                 <Text size="1" color="gray">
                   Pokazano {data.shownCount} z {data.total} zdarzeń
                 </Text>
-              )}
+                {data.hasMore && (
+                  <Button
+                    size="2"
+                    variant="soft"
+                    onClick={data.onLoadMore}
+                    loading={data.isLoadingMore}
+                  >
+                    Pokaż więcej
+                  </Button>
+                )}
+                {data.loadMoreError && (
+                  <Flex gap="2" align="center">
+                    <Text size="1" color="red">
+                      Nie udało się wczytać kolejnych zdarzeń
+                    </Text>
+                    <Button size="1" variant="ghost" onClick={data.onRetryLoadMore}>
+                      Spróbuj ponownie
+                    </Button>
+                  </Flex>
+                )}
+              </Flex>
             </Flex>
           )}
         </DataView>
