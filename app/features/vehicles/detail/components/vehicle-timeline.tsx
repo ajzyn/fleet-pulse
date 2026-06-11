@@ -12,13 +12,11 @@ export function VehicleTimeline({ state }: { state: VehicleTimelineState }) {
         <DataView state={state} loading={<TimelineSkeleton />}>
           {(data) => (
             <Flex direction="column" gap="4">
-              <Flex asChild direction="column" gap="4">
-                <ol>
-                  {data.events.map((event) => (
-                    <TimelineRow key={event.id} event={event} />
-                  ))}
-                </ol>
-              </Flex>
+              <ol className="list-none p-0 m-0">
+                {data.events.map((event) => (
+                  <TimelineRow key={event.id} event={event} />
+                ))}
+              </ol>
               <Flex direction="column" gap="2" align="start">
                 <Text size="1" color="gray">
                   Pokazano {data.shownCount} z {data.total} zdarzeń
@@ -54,7 +52,13 @@ export function VehicleTimeline({ state }: { state: VehicleTimelineState }) {
 
 function TimelineRow({ event }: { event: TimelineEventView }) {
   return (
-    <Flex asChild gap="3" align="start">
+    <Flex
+      asChild
+      gap="3"
+      align="start"
+      py="3"
+      className="border-b border-[var(--gray-a4)] last:border-b-0"
+    >
       <li>
         <Box
           mt="1"
@@ -89,9 +93,15 @@ function TimelineRow({ event }: { event: TimelineEventView }) {
 
 function TimelineSkeleton() {
   return (
-    <Flex direction="column" gap="4">
+    <Flex direction="column">
       {Array.from({ length: 5 }, (_, i) => (
-        <Flex key={i} gap="3" align="start">
+        <Flex
+          key={i}
+          gap="3"
+          align="start"
+          py="3"
+          className="border-b border-[var(--gray-a4)] last:border-b-0"
+        >
           <Skeleton width="8px" height="8px" style={{ borderRadius: "9999px", marginTop: "4px" }} />
           <Flex direction="column" gap="1" flexGrow="1">
             <Skeleton width="40%" height="16px" />

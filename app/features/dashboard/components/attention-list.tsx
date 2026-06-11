@@ -133,7 +133,7 @@ function AttentionRow({ item, className = "" }: { item: AttentionItemView; class
   const overflowCount = item.chips.length - visibleChips.length;
 
   return (
-    <li className={`border-b border-[var(--gray-a3)] last:border-b-0 ${className}`}>
+    <li className={`border-b border-[var(--gray-a4)] last:border-b-0 ${className}`}>
       <Link
         to={item.href}
         aria-label={`${item.plateNumber} — ${item.make} ${item.model}`}
