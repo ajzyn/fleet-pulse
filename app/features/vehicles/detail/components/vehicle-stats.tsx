@@ -1,5 +1,5 @@
 import { Box, Card, Flex, Heading, Skeleton, Text } from "@radix-ui/themes";
-import { AsyncView } from "~/components/feedback/async-view";
+import { DataView } from "~/components/feedback/data-view";
 import type { VehicleStatsKpisView, VehicleStatsState } from "../types";
 import { VehicleCostChart } from "./vehicle-cost-chart";
 import { VehicleEfficiencyChart } from "./vehicle-efficiency-chart";
@@ -7,7 +7,7 @@ import { VehicleMileageChart } from "./vehicle-mileage-chart";
 
 export function VehicleStats({ state }: { state: VehicleStatsState }) {
   return (
-    <AsyncView state={state} className="h-[200px]" loading={<StatsSkeleton />}>
+    <DataView state={state} className="h-[200px]" loading={<StatsSkeleton />}>
       {(data) => (
         <Flex direction="column" gap="6">
           <StatsKpis kpis={data.kpis} />
@@ -16,7 +16,7 @@ export function VehicleStats({ state }: { state: VehicleStatsState }) {
           <VehicleEfficiencyChart points={data.efficiency} hasData={data.hasEfficiency} />
         </Flex>
       )}
-    </AsyncView>
+    </DataView>
   );
 }
 

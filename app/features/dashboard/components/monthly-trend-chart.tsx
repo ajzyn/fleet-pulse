@@ -13,7 +13,7 @@ import {
   type MouseHandlerDataParam,
   type TooltipContentProps,
 } from "recharts";
-import { AsyncView } from "~/components/feedback/async-view";
+import { DataView } from "~/components/feedback/data-view";
 import { plnFormatter } from "~/lib/number-formatter";
 import { isTooltipVisible, valueByDataKey } from "~/lib/recharts/tooltip";
 import type { MonthlyTrendChartState, MonthlyTrendPointView } from "../types";
@@ -53,7 +53,7 @@ export function MonthlyTrendChart({
         <Heading as="h2" size="4" mb="4">
           Trend miesięczny (12 miesięcy)
         </Heading>
-        <AsyncView
+        <DataView
           state={state}
           className={CHART_HEIGHT_CLASS}
           loading={
@@ -63,7 +63,7 @@ export function MonthlyTrendChart({
           }
         >
           {(data) => <MonthlyTrendBody points={data.points} />}
-        </AsyncView>
+        </DataView>
       </section>
     </Card>
   );

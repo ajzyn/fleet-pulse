@@ -1,5 +1,5 @@
 import type { BadgeProps } from "@radix-ui/themes";
-import type { AsyncViewState } from "~/components/feedback/async-view";
+import type { DataViewState } from "~/components/feedback/data-view";
 
 export interface VehicleHeaderView {
   title: string;
@@ -24,7 +24,7 @@ export interface TimelineEventView {
   statusBadge: { label: string; color: NonNullable<BadgeProps["color"]> } | null;
 }
 
-export type VehicleTimelineState = AsyncViewState<{
+export type VehicleTimelineState = DataViewState<{
   events: TimelineEventView[];
   total: number;
   shownCount: number;
@@ -55,7 +55,7 @@ export interface VehicleStatsKpisView {
   avgKmPerDay: string;
 }
 
-export type VehicleStatsState = AsyncViewState<{
+export type VehicleStatsState = DataViewState<{
   kpis: VehicleStatsKpisView;
   mileage: MileagePointView[];
   costs: CostPointView[];

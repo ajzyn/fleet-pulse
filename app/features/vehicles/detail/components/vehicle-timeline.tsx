@@ -1,5 +1,5 @@
 import { Badge, Box, Card, Flex, Heading, Skeleton, Text } from "@radix-ui/themes";
-import { AsyncView } from "~/components/feedback/async-view";
+import { DataView } from "~/components/feedback/data-view";
 import type { TimelineEventView, VehicleTimelineState } from "../types";
 
 export function VehicleTimeline({ state }: { state: VehicleTimelineState }) {
@@ -9,7 +9,7 @@ export function VehicleTimeline({ state }: { state: VehicleTimelineState }) {
         <Heading as="h2" size="4" mb="4">
           Historia zdarzeń
         </Heading>
-        <AsyncView state={state} loading={<TimelineSkeleton />}>
+        <DataView state={state} loading={<TimelineSkeleton />}>
           {(data) => (
             <Flex direction="column" gap="4">
               <Flex asChild direction="column" gap="4">
@@ -26,7 +26,7 @@ export function VehicleTimeline({ state }: { state: VehicleTimelineState }) {
               )}
             </Flex>
           )}
-        </AsyncView>
+        </DataView>
       </section>
     </Card>
   );

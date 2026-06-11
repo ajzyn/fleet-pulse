@@ -2,27 +2,27 @@ import { ExclamationTriangleIcon, InfoCircledIcon } from "@radix-ui/react-icons"
 import { Box, Button, Flex, Text } from "@radix-ui/themes";
 import type { ReactNode } from "react";
 
-export type AsyncViewState<TData> =
+export type DataViewState<TData> =
   | { status: "loading" }
   | { status: "error"; message: string; onRetry: () => Promise<void> }
   | { status: "empty"; reason: string }
   | ({ status: "success" } & TData);
 
-interface AsyncViewProps<TData> {
-  state: AsyncViewState<TData>;
+interface DataViewProps<TData> {
+  state: DataViewState<TData>;
   loading: ReactNode;
   children: (data: TData) => ReactNode;
   className?: string;
   emptyExtra?: ReactNode;
 }
 
-export function AsyncView<TData>({
+export function DataView<TData>({
   state,
   loading,
   children,
   className,
   emptyExtra,
-}: AsyncViewProps<TData>) {
+}: DataViewProps<TData>) {
   if (state.status === "loading") {
     return <>{loading}</>;
   }

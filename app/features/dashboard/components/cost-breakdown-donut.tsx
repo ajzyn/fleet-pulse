@@ -9,7 +9,7 @@ import {
   Tooltip,
   type TooltipContentProps,
 } from "recharts";
-import { AsyncView } from "~/components/feedback/async-view";
+import { DataView } from "~/components/feedback/data-view";
 import { plnCompactFormatter, plnFormatter } from "~/lib/number-formatter";
 import { isTooltipVisible, toNumber } from "~/lib/recharts/tooltip";
 import type { CostBreakdownDonutState, CostBreakdownSliceView } from "../types";
@@ -28,7 +28,7 @@ export function CostBreakdownDonut({ state }: { state: CostBreakdownDonutState }
         <Heading as="h2" size="4" mb="4">
           Struktura kosztów w tym miesiącu
         </Heading>
-        <AsyncView
+        <DataView
           state={state}
           className={CHART_HEIGHT_CLASS}
           loading={
@@ -38,7 +38,7 @@ export function CostBreakdownDonut({ state }: { state: CostBreakdownDonutState }
           }
         >
           {(data) => <CostBreakdownBody slices={data.slices} total={data.total} />}
-        </AsyncView>
+        </DataView>
       </section>
     </Card>
   );

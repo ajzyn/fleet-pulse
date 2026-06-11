@@ -1,6 +1,6 @@
 import { Badge, Box, Card, Flex, Heading, Skeleton, Text, type BadgeProps } from "@radix-ui/themes";
 import { Link } from "react-router";
-import { AsyncView } from "~/components/feedback/async-view";
+import { DataView } from "~/components/feedback/data-view";
 import { dateFormatter } from "~/lib/date-formatter";
 import type { AttentionItemView, AttentionListState, ChipTone } from "../types";
 
@@ -49,7 +49,7 @@ export function AttentionList({ state, generatedAt }: AttentionListProps) {
         <Heading as="h2" size="4" mb="4">
           Wymaga uwagi
         </Heading>
-        <AsyncView
+        <DataView
           state={state}
           className="min-h-[72px]"
           loading={
@@ -73,7 +73,7 @@ export function AttentionList({ state, generatedAt }: AttentionListProps) {
               hasOverflow={data.hasOverflow}
             />
           )}
-        </AsyncView>
+        </DataView>
       </section>
     </Card>
   );

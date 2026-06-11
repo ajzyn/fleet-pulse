@@ -12,7 +12,7 @@ import {
   type MouseHandlerDataParam,
   type TooltipContentProps,
 } from "recharts";
-import { AsyncView } from "~/components/feedback/async-view";
+import { DataView } from "~/components/feedback/data-view";
 import { plnCompactFormatter, plnFormatter } from "~/lib/number-formatter";
 import { isTooltipVisible, valueByDataKey } from "~/lib/recharts/tooltip";
 import type { DailyCostChartState, DailyCostPointView } from "../types";
@@ -34,7 +34,7 @@ export function DailyCostChart({ state }: { state: DailyCostChartState }) {
         <Heading as="h2" size="4" mb="4">
           Dzienne koszty (30 dni)
         </Heading>
-        <AsyncView
+        <DataView
           state={state}
           className={CHART_HEIGHT_CLASS}
           loading={
@@ -44,7 +44,7 @@ export function DailyCostChart({ state }: { state: DailyCostChartState }) {
           }
         >
           {(data) => <DailyCostBars points={data.points} />}
-        </AsyncView>
+        </DataView>
       </section>
     </Card>
   );
