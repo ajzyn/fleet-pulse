@@ -1,12 +1,9 @@
-import { cleanup, render, screen } from "@testing-library/react";
-import { Theme } from "@radix-ui/themes";
-import type { ReactElement } from "react";
+import { cleanup, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { renderInTheme } from "~/test/render";
 import { DeltaBadge } from "./delta-badge";
 
 afterEach(cleanup);
-
-const renderInTheme = (ui: ReactElement) => render(<Theme>{ui}</Theme>);
 
 describe("DeltaBadge", () => {
   it("reads a positive change in the good direction as positive sentiment", () => {
