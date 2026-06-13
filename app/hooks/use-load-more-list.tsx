@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFetcher } from "react-router";
 import type { Page } from "~/lib/server/pagination";
 
@@ -24,6 +24,7 @@ export const useLoadMoreList = <T,>({
   resetKey,
 }: UseLoadMoreListOptions<T>): UseLoadMoreListResult<T> => {
   const fetcher = useFetcher<Page<T>>();
+  const requestedCursor = useRef<string | null>(null);
 
   const [items, setItems] = useState<T[]>(initial.items);
   const [cursor, setCursor] = useState<string | null>(initial.nextCursor);
@@ -43,6 +44,10 @@ export const useLoadMoreList = <T,>({
     setLastProcessed(fetcher.data);
   }
 
+  useEffect(() => {
+    requestedCursor.current = null;
+  }, [resetKey]);
+
   if (fetcher.state !== prevState) {
     setPrevState(fetcher.state);
     if (prevState === "loading" && fetcher.state === "idle" && !fetcher.data) {
@@ -58,15 +63,20 @@ export const useLoadMoreList = <T,>({
     if (page.total !== undefined) setTotal(page.total);
   }
 
-  const requestedCursor = useRef<string | null>(null);
+  const buildUrl = (target: string) => {
+    const [path = "", qs] = endpoint.split("?");
+    const sp = new URLSearchParams(qs);
+    sp.set("cursor", target);
+    return `${path}?${sp}`;
+  };
 
   const loadMore = () => {
     if (cursor === null) return;
     if (fetcher.state !== "idle") return;
+    if (!error && requestedCursor.current === cursor) return;
     setError(false);
     requestedCursor.current = cursor;
-    const sp = new URLSearchParams({ cursor });
-    void fetcher.load(`${endpoint}?${sp.toString()}`);
+    void fetcher.load(buildUrl(cursor));
   };
 
   const retry = () => {
@@ -74,8 +84,7 @@ export const useLoadMoreList = <T,>({
     if (target === null) return;
     if (fetcher.state !== "idle") return;
     setError(false);
-    const sp = new URLSearchParams({ cursor: target });
-    void fetcher.load(`${endpoint}?${sp.toString()}`);
+    void fetcher.load(buildUrl(target));
   };
 
   return {

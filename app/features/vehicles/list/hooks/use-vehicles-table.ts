@@ -1,13 +1,13 @@
+import type { Vehicle } from "@db/schema";
 import { getCoreRowModel, useReactTable, type SortingState } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useNavigation } from "react-router";
 import { useTableUrlParams } from "~/hooks/use-table-url-params";
-import type { Route } from "../../../../routes/vehicles/+types/list";
 import { vehiclesTableColumns } from "../components/vehicles-table-columns";
+import type { VehiclesQuery } from "../server/list.params.server";
 import type { FilterKey } from "../types";
 
-export const useVehiclesTable = (loaderData: Route.ComponentProps["loaderData"]) => {
-  const { query, rows, total } = loaderData;
+export const useVehiclesTable = (items: Vehicle[], query: VehiclesQuery) => {
   const navigation = useNavigation();
   const { setSort } = useTableUrlParams<FilterKey>();
 
@@ -17,7 +17,7 @@ export const useVehiclesTable = (loaderData: Route.ComponentProps["loaderData"])
   );
 
   const table = useReactTable({
-    data: rows,
+    data: items,
     columns: vehiclesTableColumns,
     state: { sorting },
     onSortingChange: setSort,
@@ -31,8 +31,5 @@ export const useVehiclesTable = (loaderData: Route.ComponentProps["loaderData"])
   return {
     table,
     isLoading: navigation.state === "loading",
-    totalPages: Math.ceil(total / query.pageSize),
-    pageSize: query.pageSize,
-    currentPage: query.page,
   };
 };

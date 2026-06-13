@@ -12,23 +12,12 @@ function parseSortParam(raw: string | null): SortingState {
 export const useTableUrlParams = <K extends string>() => {
   const [, setSearchParams] = useSearchParams();
 
-  const setPage = useCallback(
-    (page: number) => {
-      setSearchParams((params) => {
-        params.set("page", page.toString());
-        return params;
-      });
-    },
-    [setSearchParams],
-  );
-
   const setFilter = useCallback(
     (key: K, value: string | undefined) => {
       setSearchParams(
         (params) => {
           if (value === undefined || value === "") params.delete(key);
           else params.set(key, value);
-          params.set("page", "1");
           return params;
         },
         { replace: true },
@@ -46,7 +35,6 @@ export const useTableUrlParams = <K extends string>() => {
           const first = next[0];
           if (!first) params.delete("sort");
           else params.set("sort", `${first.id}:${first.desc ? "desc" : "asc"}`);
-          params.set("page", "1");
           return params;
         },
         { replace: true },
@@ -55,5 +43,5 @@ export const useTableUrlParams = <K extends string>() => {
     [setSearchParams],
   );
 
-  return { setFilter, setSort, setPage };
+  return { setFilter, setSort };
 };

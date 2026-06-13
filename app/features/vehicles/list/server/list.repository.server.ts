@@ -1,6 +1,7 @@
 import { db } from "@db/client";
-import { vehicles } from "@db/schema";
+import { vehicles, type Vehicle } from "@db/schema";
 import { and, asc, count, desc, eq, ilike, or } from "drizzle-orm";
+import { buildOffsetPage, decodeOffsetCursor, type Page } from "~/lib/server/pagination";
 import type { VehiclesQuery } from "./list.params.server";
 
 const SORT_COLUMNS = {
@@ -37,10 +38,11 @@ const buildWhere = (query: VehiclesQuery) => {
   return conditions.length === 0 ? undefined : and(...conditions);
 };
 
-export const listVehicles = async (query: VehiclesQuery) => {
+export const listVehicles = async (query: VehiclesQuery): Promise<Page<Vehicle>> => {
   const where = buildWhere(query);
   const sortColumn = query.sort ? SORT_COLUMNS[query.sort.field] : vehicles.createdAt;
   const direction = query.sort?.dir === "desc" ? desc : asc;
+  const offset = decodeOffsetCursor(query.cursor);
 
   const [rows, totalResult] = await Promise.all([
     db
@@ -49,12 +51,9 @@ export const listVehicles = async (query: VehiclesQuery) => {
       .where(where)
       .orderBy(direction(sortColumn), asc(vehicles.id))
       .limit(query.pageSize)
-      .offset((query.page - 1) * query.pageSize),
+      .offset(offset),
     db.select({ value: count() }).from(vehicles).where(where),
   ]);
 
-  return {
-    rows,
-    total: totalResult[0]?.value ?? 0,
-  };
+  return buildOffsetPage(rows, offset, totalResult[0]?.value ?? 0);
 };
