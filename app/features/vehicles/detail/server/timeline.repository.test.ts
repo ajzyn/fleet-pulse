@@ -38,8 +38,14 @@ const split = (events: TimelineEvent[]) => ({
   fuel: events.filter((e): e is FuelTimelineEvent => e.kind === "fuel"),
 });
 
+const decodeOrFail = <T>(cursor: string): T => {
+  const decoded = decodeCursor<T>(cursor);
+  if (decoded === null) throw new Error("expected a decodable cursor");
+  return decoded;
+};
+
 const keysetFilter = (events: TimelineEvent[], cursor: string): TimelineEvent[] => {
-  const c = decodeCursor<{ at: string; id: string }>(cursor);
+  const c = decodeOrFail<{ at: string; id: string }>(cursor);
   const cAt = new Date(c.at).getTime();
   return events.filter((e) => {
     const t = e.at.getTime();
@@ -115,6 +121,6 @@ describe("buildTimelinePage", () => {
     );
 
     expect(ids(page.items)).toEqual(["m5", "m4"]);
-    expect(decodeCursor<{ id: string }>(expectCursor(page.nextCursor)).id).toBe("m4");
+    expect(decodeOrFail<{ id: string }>(expectCursor(page.nextCursor)).id).toBe("m4");
   });
 });

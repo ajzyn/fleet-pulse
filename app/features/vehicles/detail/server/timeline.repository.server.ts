@@ -57,9 +57,12 @@ export const buildTimelinePage = (
   return { items, nextCursor };
 };
 
-const decodeTimelineCursor = (cursor: string): TimelineCursor => {
+const decodeTimelineCursor = (cursor: string): TimelineCursor | undefined => {
   const raw = decodeCursor<{ at: string; id: string }>(cursor);
-  return { at: new Date(raw.at), id: raw.id };
+  if (!raw || typeof raw.at !== "string" || typeof raw.id !== "string") return undefined;
+  const at = new Date(raw.at);
+  if (Number.isNaN(at.getTime())) return undefined;
+  return { at, id: raw.id };
 };
 
 export const getVehicleTimeline = async (
