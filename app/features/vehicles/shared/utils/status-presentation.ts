@@ -14,9 +14,9 @@ export const STATUSES = [
 ] as const satisfies Vehicle["status"][];
 
 const STATUS_LABELS: Record<Vehicle["status"], string> = {
-  active: "Active",
-  in_maintenance: "In maintenance",
-  retired: "Retired",
+  active: "Aktywny",
+  in_maintenance: "W serwisie",
+  retired: "Wycofany",
 };
 
 export const getStatusLabel = (status: Vehicle["status"]) => STATUS_LABELS[status];

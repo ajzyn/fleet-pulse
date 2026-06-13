@@ -16,7 +16,7 @@ export function VehicleFilterFields({ onChange, status, fuel }: VehicleFilterFie
       <EnumFilterSelect
         id="filter-status"
         label="Status"
-        allLabel="All statuses"
+        allLabel="Wszystkie statusy"
         options={vehicleStatus.enumValues}
         getOptionLabel={getStatusLabel}
         value={status}
@@ -26,8 +26,8 @@ export function VehicleFilterFields({ onChange, status, fuel }: VehicleFilterFie
       />
       <EnumFilterSelect
         id="filter-fuel"
-        label="Fuel type"
-        allLabel="All fuel types"
+        label="Rodzaj paliwa"
+        allLabel="Wszystkie rodzaje paliwa"
         options={fuelType.enumValues}
         getOptionLabel={getFuelLabel}
         value={fuel}

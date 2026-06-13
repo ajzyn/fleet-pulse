@@ -29,7 +29,7 @@ export function VehicleStatusCell({ vehicle, size }: VehicleStatusCellProps) {
             variant="ghost"
             color="gray"
             className="cursor-pointer"
-            aria-label={`Change status (current: ${getStatusLabel(optimisticStatus)})`}
+            aria-label={`Zmień status (obecny: ${getStatusLabel(optimisticStatus)})`}
           >
             <Badge
               {...(size && { size })}
@@ -67,9 +67,9 @@ export function VehicleStatusCell({ vehicle, size }: VehicleStatusCellProps) {
         open={retireDialog.open}
         onOpenChange={retireDialog.onOpenChange}
         onConfirm={handleConfirmRetire}
-        title="Retire this vehicle?"
-        description="Retired vehicles can't take trips or be assigned to drivers. You can reactivate them later."
-        confirmLabel="Retire"
+        title="Wycofać ten pojazd?"
+        description="Wycofane pojazdy nie mogą realizować tras ani być przypisane do kierowców. Możesz je później ponownie aktywować."
+        confirmLabel="Wycofaj"
       />
     </>
   );
