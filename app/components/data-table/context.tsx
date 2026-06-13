@@ -10,13 +10,3 @@ export const useDataTable = () => {
   if (!t) throw new Error("DataTable.* components must be used inside <DataTable.Root>");
   return t;
 };
-
-export const ScrollCtx = createContext<HTMLDivElement | null | undefined>(undefined);
-
-export const useScrollElement = () => {
-  const v = useContext(ScrollCtx);
-  if (v === undefined) {
-    throw new Error("This component must be used inside <DataTable.Viewport>");
-  }
-  return v;
-};

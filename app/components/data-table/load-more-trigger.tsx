@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { useScrollElement } from "./context";
 
 interface LoadMoreTriggerProps {
   onLoadMore: () => void;
@@ -12,13 +11,12 @@ export function LoadMoreTrigger({
   disabled = false,
   rootMargin = "300px",
 }: LoadMoreTriggerProps) {
-  const scrollEl = useScrollElement();
   const triggerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (disabled) return;
     const trigger = triggerRef.current;
-    if (!trigger || !scrollEl) return;
+    if (!trigger) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -26,13 +24,13 @@ export function LoadMoreTrigger({
           onLoadMore();
         }
       },
-      { root: scrollEl, rootMargin },
+      { root: null, rootMargin },
     );
     observer.observe(trigger);
     return () => {
       observer.disconnect();
     };
-  }, [disabled, onLoadMore, rootMargin, scrollEl]);
+  }, [disabled, onLoadMore, rootMargin]);
 
   return <div ref={triggerRef} aria-hidden style={{ height: 1 }} />;
 }
