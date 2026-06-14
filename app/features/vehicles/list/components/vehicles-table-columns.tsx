@@ -1,23 +1,29 @@
 import type { Vehicle } from "@db/schema";
 import type { ColumnDef } from "@tanstack/react-table";
-import { VehicleStatusCell } from "./vehicle-status-cell";
+import { VehicleStatusCell } from "~/features/vehicles/shared/components/vehicle-status-cell";
+import { getFuelLabel } from "~/features/vehicles/shared/utils/fuel-presentation";
 
 export const vehiclesTableColumns: ColumnDef<Vehicle>[] = [
-  { accessorKey: "plateNumber", header: "Plate", size: 120 },
+  { accessorKey: "plateNumber", header: "Rejestracja", size: 120 },
   { accessorKey: "vin", header: "VIN", size: 180 },
   {
     id: "make",
-    header: "Make / Model",
+    header: "Marka / Model",
     accessorFn: (row) => `${row.make} ${row.model}`,
     enableSorting: true,
     size: 150,
   },
-  { accessorKey: "year", header: "Year", enableSorting: true, size: 80 },
-  { accessorKey: "fuelType", header: "Fuel", size: 100 },
+  { accessorKey: "year", header: "Rok", enableSorting: true, size: 80 },
+  {
+    accessorKey: "fuelType",
+    header: "Paliwo",
+    size: 100,
+    cell: ({ row }) => getFuelLabel(row.original.fuelType),
+  },
   {
     id: "mileage",
     accessorKey: "currentMileageKm",
-    header: "Mileage (km)",
+    header: "Przebieg (km)",
     enableSorting: true,
     size: 130,
     cell: ({ getValue }) => getValue<number>().toLocaleString("pl-PL"),

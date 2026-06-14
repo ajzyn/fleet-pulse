@@ -1,9 +1,9 @@
-import type { AsyncViewState } from "~/components/feedback/async-view";
+import type { DataViewState } from "~/components/feedback/data-view";
 import type { DeltaBadgeProps } from "./components/delta-badge";
 import type { AttentionStatus, ChipKind } from "./server/attention/types";
 import type { CostBreakdownCategory } from "./server/trends/types";
 
-export type KPICardState = AsyncViewState<{
+export type KPICardState = DataViewState<{
   value: string;
   subtitle?: string;
   delta?: DeltaBadgeProps;
@@ -36,7 +36,7 @@ export interface AttentionItemView {
   href: string;
 }
 
-export type AttentionListState = AsyncViewState<{
+export type AttentionListState = DataViewState<{
   items: AttentionItemView[];
   totalCount: number;
   hasOverflow: boolean;
@@ -49,7 +49,7 @@ export interface DailyCostPointView {
   maintenance: number;
 }
 
-export type DailyCostChartState = AsyncViewState<{
+export type DailyCostChartState = DataViewState<{
   points: DailyCostPointView[];
 }>;
 
@@ -61,7 +61,7 @@ export interface CostBreakdownSliceView {
   percentage: number;
 }
 
-export type CostBreakdownDonutState = AsyncViewState<{
+export type CostBreakdownDonutState = DataViewState<{
   slices: CostBreakdownSliceView[];
   total: number;
 }>;
@@ -74,6 +74,6 @@ export interface MonthlyTrendPointView {
   utilization: number;
 }
 
-export type MonthlyTrendChartState = AsyncViewState<{
+export type MonthlyTrendChartState = DataViewState<{
   points: MonthlyTrendPointView[];
 }>;

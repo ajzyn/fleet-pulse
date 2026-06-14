@@ -6,7 +6,9 @@ export default [
     index("./routes/dashboard/route.tsx"),
     ...prefix("vehicles", [
       index("./routes/vehicles/list.tsx"),
+      route("data", "./routes/vehicles/list.data.tsx"),
       route(":id", "./routes/vehicles/details.tsx"),
+      route(":id/timeline", "./routes/vehicles/timeline.data.tsx"),
     ]),
     ...prefix("drivers", [index("./routes/drivers/list.tsx")]),
     route("costs", "./routes/costs/route.tsx"),

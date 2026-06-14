@@ -13,12 +13,12 @@ export function VehiclesFilters({ q, status, fuel, activeCount, onChange }: Vehi
     <Flex gap="3" wrap="wrap" align="end" mb="4">
       <Flex direction="column" gap="1" flexGrow="1" minWidth="200px" maxWidth="600px">
         <Text as="label" size="2" htmlFor="filter-q" color="gray" className="hidden md:block">
-          Search
+          Szukaj
         </Text>
         <TextField.Root
           id="filter-q"
           type="search"
-          placeholder="Plate, VIN, make…"
+          placeholder="Rejestracja, VIN, marka…"
           className="w-full"
           value={q}
           onChange={(e) => {
@@ -32,13 +32,13 @@ export function VehiclesFilters({ q, status, fuel, activeCount, onChange }: Vehi
       </Flex>
       <Box display={{ initial: "block", md: "none" }}>
         <Button variant="soft" color="gray" onClick={drawer.onOpen}>
-          Filters
+          Filtry
           {activeCount > 0 && <Badge>{activeCount}</Badge>}
         </Button>
       </Box>
       <Drawer.Root side="bottom" size="sm" open={drawer.open} onOpenChange={drawer.onOpenChange}>
         <Drawer.Header>
-          <Drawer.Title>Filters</Drawer.Title>
+          <Drawer.Title>Filtry</Drawer.Title>
         </Drawer.Header>
         <Drawer.Body>
           <Flex direction="column" gap="5" maxWidth="500px">

@@ -1,8 +1,8 @@
 import { fuelType, vehicleStatus } from "@db/schema";
 import { EnumFilterSelect } from "~/components/filters/enum-filter-select";
 import type { FilterKey, FuelType, VehicleStatus } from "../types";
-import { getFuelLabel } from "../utils/fuel-presentation";
-import { getStatusLabel } from "../utils/status-presentation";
+import { getFuelLabel } from "~/features/vehicles/shared/utils/fuel-presentation";
+import { getStatusLabel } from "~/features/vehicles/shared/utils/status-presentation";
 
 interface VehicleFilterFieldsProps {
   onChange: (key: FilterKey, value: string | undefined) => void;
@@ -16,7 +16,7 @@ export function VehicleFilterFields({ onChange, status, fuel }: VehicleFilterFie
       <EnumFilterSelect
         id="filter-status"
         label="Status"
-        allLabel="All statuses"
+        allLabel="Wszystkie statusy"
         options={vehicleStatus.enumValues}
         getOptionLabel={getStatusLabel}
         value={status}
@@ -26,8 +26,8 @@ export function VehicleFilterFields({ onChange, status, fuel }: VehicleFilterFie
       />
       <EnumFilterSelect
         id="filter-fuel"
-        label="Fuel type"
-        allLabel="All fuel types"
+        label="Rodzaj paliwa"
+        allLabel="Wszystkie rodzaje paliwa"
         options={fuelType.enumValues}
         getOptionLabel={getFuelLabel}
         value={fuel}

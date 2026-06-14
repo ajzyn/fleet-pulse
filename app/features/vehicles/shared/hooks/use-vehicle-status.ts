@@ -4,12 +4,12 @@ import { useFetcher, useRevalidator } from "react-router";
 import { toast } from "sonner";
 import { useDisclosure } from "~/hooks/use-disclosure";
 import { ActionErrorKind, INTENT_FIELD } from "~/lib/server/action";
-import type { action } from "~/routes/vehicles/list";
 import { VEHICLES_INTENT } from "../server/intents";
+import type { handleUpdateStatus } from "../server/update-status.action.server";
 import { getStatusLabel } from "../utils/status-presentation";
 
 export const useStatusCell = (vehicle: Vehicle) => {
-  const fetcher = useFetcher<typeof action>({ key: `vehicle-status-${vehicle.id}` });
+  const fetcher = useFetcher<typeof handleUpdateStatus>({ key: `vehicle-status-${vehicle.id}` });
   const retireDialog = useDisclosure();
   const revalidator = useRevalidator();
 
@@ -33,17 +33,17 @@ export const useStatusCell = (vehicle: Vehicle) => {
     if (!fetcher.data) return;
 
     if (fetcher.data.ok) {
-      toast.success("Status updated");
+      toast.success("Status zaktualizowany");
       return;
     }
 
     if (fetcher.data.kind === ActionErrorKind.Conflict) {
       const { current } = fetcher.data.payload;
-      toast.error(`${vehicle.plateNumber}: status is now "${getStatusLabel(current.status)}"`, {
-        description: "Updated by someone else. Refresh to continue.",
+      toast.error(`${vehicle.plateNumber}: status to teraz "${getStatusLabel(current.status)}"`, {
+        description: "Zmienione przez kogoś innego. Odśwież, aby kontynuować.",
         duration: Infinity,
         action: {
-          label: "Refresh",
+          label: "Odśwież",
           onClick: () => {
             void revalidator.revalidate();
           },
@@ -53,11 +53,11 @@ export const useStatusCell = (vehicle: Vehicle) => {
     }
 
     if (fetcher.data.kind === ActionErrorKind.NotFound) {
-      toast.error("Vehicle no longer exists");
+      toast.error("Pojazd już nie istnieje");
       return;
     }
 
-    toast.error("Could not update status");
+    toast.error("Nie udało się zaktualizować statusu");
   }, [fetcher.data, vehicle.plateNumber, revalidator]);
 
   const handleSelect = (status: Vehicle["status"]) => {

@@ -23,8 +23,8 @@ const SortSchema = z
   });
 
 const ListVehiclesQuery = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  pageSize: z.coerce.number().int().min(10).max(200).default(50),
+  cursor: z.string().optional(),
+  pageSize: z.coerce.number().int().min(10).max(200).default(24),
   sort: SortSchema,
   status: z.enum(vehicleStatus.enumValues).optional(),
   fuelType: z.enum(fuelType.enumValues).optional(),
